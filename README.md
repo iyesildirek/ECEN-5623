@@ -1,2 +1,2 @@
-# ECEN5623
-Real-Time Embedded Systems
+# ECEN-5623
+## Real-Time Embedded Systems
