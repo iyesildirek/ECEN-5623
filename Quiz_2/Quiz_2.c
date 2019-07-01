@@ -75,7 +75,7 @@ int main (int argc, char *argv[])
 	pthread_join(threads[2], NULL) != 0 && \
 	pthread_join(threads[3], NULL) != 0)
 	{
-	// Wait until all threads to complete
+	// Wait until all threads are completed
 	}
 	
 	/* Add each thread result */
