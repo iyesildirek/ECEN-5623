@@ -19,7 +19,7 @@
 * exercise #4 problem #4.
 *****************************************************************************/
 /**
-* @file problem4.c
+* @file problem5.c
 * @brief This source file contains a c program to capture a series of pictures
 * in .ppm format utilizing a C270 logitec camera. Additionally a grayscale 
 * transformation is added between samples.
@@ -30,27 +30,12 @@
 *
 */ 
  
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <getopt.h>             /* getopt_long() */
-#include <fcntl.h>              /* low-level i/o */
-#include <unistd.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/mman.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-#include <time.h>
-#include <ctype.h>
+#include "brighten.h"
+#include "sharpen.h"
+#include "problem5.h"
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 #define COLOR_CONVERT
-
 
 #define HRES_STR "320"
 #define VRES_STR "240"
@@ -85,9 +70,6 @@ static int              out_buf;
 static int              force_format=1;
 static int              frame_count = 5;
 int validStatus = 0;
-/* Set default resolution to 320x240*/
-int HRES = 320;
-int VRES = 240;
 static void errno_exit(const char *s)
 {
         fprintf(stderr, "%s error %d, %s\n", s, errno, strerror(errno));

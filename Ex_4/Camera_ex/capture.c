@@ -13,29 +13,13 @@
  * see http://linuxtv.org/docs.php for more information
  */
 
-/*****************************************************************************
-* Source code (capture.c) was provide by Dr. Siewerts for Course ECEN-5623 was  
-* slightly modified to add a grayscale transformation as required in 
-* exercise #4 problem #4.
-*****************************************************************************/
-/**
-* @file problem4.c
-* @brief This source file contains a c program to capture a series of pictures
-* in .ppm format utilizing a C270 logitec camera. Additionally a grayscale 
-* transformation is added between samples.
-*
-* @author: Ismail Yesildirek
-* @date July 18 2019
-* @version 1.0
-*
-*/ 
- 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
 #include <getopt.h>             /* getopt_long() */
+
 #include <fcntl.h>              /* low-level i/o */
 #include <unistd.h>
 #include <errno.h>
@@ -44,20 +28,17 @@
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
+
 #include <linux/videodev2.h>
+
 #include <time.h>
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 #define COLOR_CONVERT
-
-/* Set picture resolution to 320x240*/
 #define HRES 320
 #define VRES 240
 #define HRES_STR "320"
 #define VRES_STR "240"
-
-/*Set gray to "1" to make image grayscale*/
-#define gray 1
 
 // Format is used by a number of functions, so made as a file global
 static struct v4l2_format fmt;
@@ -106,7 +87,7 @@ static int xioctl(int fh, int request, void *arg)
 }
 
 char ppm_header[]="P6\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
-char ppm_dumpname[]="test000.ppm";
+char ppm_dumpname[]="test00000000.ppm";
 
 static void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
 {
@@ -138,7 +119,7 @@ static void dump_ppm(const void *p, int size, unsigned int tag, struct timespec 
 
 
 char pgm_header[]="P5\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
-char pgm_dumpname[]="test000.pgm";
+char pgm_dumpname[]="test00000000.pgm";
 
 static void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time)
 {
@@ -163,6 +144,7 @@ static void dump_pgm(const void *p, int size, unsigned int tag, struct timespec 
     } while(total < size);
 
     printf("wrote %d bytes\n", total);
+
     close(dumpfd);
     
 }
@@ -186,7 +168,7 @@ void yuv2rgb_float(float y, float u, float v,
     *b = b_temp > 255.0 ? 255 : (b_temp < 0.0 ? 0 : (unsigned char)b_temp);
 }
 
-/*
+
 // This is probably the most acceptable conversion from camera YUYV to RGB
 //
 // Wikipedia has a good discussion on the details of various conversions and cites good references:
@@ -201,7 +183,6 @@ void yuv2rgb_float(float y, float u, float v,
 //      YUV422, which we assume here, where there are 2 bytes for each pixel, with two Y samples for one U & V,
 //              or as the name implies, 4Y and 2 UV pairs
 //      YUV420, where for every 4 Ys, there is a single UV pair, 1.5 bytes for each pixel or 36 bytes for 24 pixels
-*/
 
 void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b)
 {
@@ -224,21 +205,12 @@ void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned c
    if (g1 < 0) g1 = 0;
    if (b1 < 0) b1 = 0;
 
-/* Transform to grayscale */
-#if gray
-	int y1 = 0;
-	y1 = r1*0.3 + 0.59*g1 + 0.11*b1;
-   *r = y1;
-   *g = y1;
-   *b = y1;
-#else
-	// keep RGBRGB color
-   *r = r1;
-   *g = g1;
-   *b = b1;
-#endif
-
+   *r = r1 ;
+   *g = g1 ;
+   *b = b1 ;
 }
+
+
 
 unsigned int framecnt=0;
 unsigned char bigbuffer[(1280*960)];

@@ -1,11 +1,34 @@
+/*******************************************************************************
+* Include two threads and one should update a timespec structure contained in a 
+* structure that includes a double precision attitude state of {X,Y,Z acceleration 
+* and Roll, Pitch, Yaw rates at Sample_Time} (just make up values for the 
+* navigational state and see http://linux.die.net/man/3/clock_gettime for how to 
+* get a precision timestamp). The second thread should read the times-stamped 
+* state without the possibility of data corruption (partial update).
+*******************************************************************************/
+
+/********************************************
+* Code is base on the following code provided in class 
+* - POSIX-Examples/posix_clock.c
+* - incdecthread/pthread.c
+* - example-sync/deadlock.c
+* Compile code by using the gcc command below:
+* $ gcc problem_2.c -o3 a.out -lpthread -Wall
+* or use the Makefile and type "make"
+* Note: Run code as root (FIFO schedule).
+*******************************************/
+
 /********************************************************
-* @file simple.c
+* @file problem_2.c
 * @brief This source file contains code that implements two
-* threads that.
+* threads that share a timing global variable. One thread 
+* performs operations and stores the timing value in the global
+* variables and the other thread waits unitl the first thread 
+* unlocks the semaphore and then reads the results.
 * 
 *
 * @author Ismail Yesildirek 
-* @date July 19 2019
+* @date July 5 2019
 * @version 1.0
 *
 ********************************************************/
@@ -15,29 +38,8 @@
 #include <pthread.h>
 #include <sched.h>
 #include <time.h>
-#include <string.h>
-#include <assert.h>
-#include <getopt.h>             /* getopt_long() */
-#include <fcntl.h>              /* low-level i/o */
-#include <unistd.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/mman.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
 
-#define CLEAR(x) memset(&(x), 0, sizeof(x))
-#define COLOR_CONVERT
-
-/* Set picture resolution to 320x240*/
-#define HRES 320
-#define VRES 240
-#define HRES_STR "320"
-#define VRES_STR "240"
-
-#define NUM_THREADS 3
+#define NUM_THREADS 2
 #define NUM_CPUS (1)
 #define ERROR (-1)
 #define OK (0)
@@ -70,7 +72,7 @@ static struct timespec rtclk_start_time = {0, 0};
 static struct timespec rtclk_stop_time = {0, 0};
 
 /* Thread #1*/
-void *grayscale(void *threadp)
+void *incThread(void *threadp)
 {
     pthread_mutex_lock(&lock); 
 	if(clock_getres(CLOCK_REALTIME, &rt_precision.rtclk_resolution) == ERROR)
@@ -104,7 +106,7 @@ void *grayscale(void *threadp)
 }
 
 /* Thread #2*/
-void *bright(void *threadp)
+void *decThread(void *threadp)
 {
 	pthread_mutex_lock(&lock); 
 
@@ -122,11 +124,6 @@ void *bright(void *threadp)
 	pthread_mutex_unlock(&lock); 
 }
 
-/* Thread #3*/
-void *sharpen(void *threadp)
-{
-	
-}
 int main (int argc, char *argv[])
 {
    int i = 0;
@@ -168,7 +165,7 @@ int main (int argc, char *argv[])
    threadParams[i].threadIdx=i;
    pthread_create(&threads[i],   // pointer to thread descriptor
                   rt_sched_attr, // use rt attributes
-                  grayscale, // thread function entry point
+                  incThread, // thread function entry point
                   (void *)&(threadParams[i]) // parameters to pass in
                  );
 	
@@ -183,7 +180,7 @@ int main (int argc, char *argv[])
    /*go to next thread */
    i++;
    threadParams[i].threadIdx=i;
-   pthread_create(&threads[i], rt_sched_attr, bright, (void *)&(threadParams[i]));
+   pthread_create(&threads[i], rt_sched_attr, decThread, (void *)&(threadParams[i]));
    
    /* Check for NULL */
 	if (tc)

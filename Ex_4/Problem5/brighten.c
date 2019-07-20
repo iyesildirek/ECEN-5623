@@ -7,17 +7,15 @@
 * Note: Run code as root (FIFO schedule).
 *******************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
+#include "brighten.h"
+#include "problem5.h"
 
 void readppm(unsigned char *buffer, int *bufferlen, 
              char *header, int *headerlen,
              unsigned *rows, unsigned *cols, unsigned *chans,
              char *file)
 {
-    char *aline=NULL;  size_t linelen; FILE *filep;
+    char *aline = NULL;  size_t linelen; FILE *filep;
     char magic[2]; unsigned col, row, sat, channels=3;
     int nread=0, toread=0, fd=0;
     *headerlen=0;
@@ -125,7 +123,7 @@ void writeppm(unsigned char *buffer, int bufferlen,
 void main(int argc, char *argv[])
 {
   char header[512];
-  unsigned char img[640*480*3], newimg[640*480*3];
+  unsigned char img[HRES*VRES*3], newimg[HRES*VRES*3];
   int bufflen, hdrlen; unsigned row=0, col=0, chan=0, pix; int i, j, k;
   double alpha=1.25;  unsigned char beta=25;
 
