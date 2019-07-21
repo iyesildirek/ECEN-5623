@@ -37,7 +37,7 @@
 #include "sharpen.h"
 #include "capture.h"
 
-#define NUM_THREADS 2
+#define NUM_THREADS 1
 #define NUM_CPUS (1)
 #define ERROR (-1)
 #define OK (0)
@@ -90,6 +90,10 @@ void print_scheduler(void);
 static struct timespec rtclk_start_time = {0, 0};
 static struct timespec rtclk_stop_time = {0, 0};
 
+/*Time for each frame */
+static struct timespec frame_start_time[6] = {0, 0};
+static struct timespec frame_stop_time[6] = {0, 0};
+
 /* Thread #1*/
 void *incThread(void *threadp)
 {
@@ -113,7 +117,8 @@ void *incThread(void *threadp)
 	  /* start time stamp */ 
 	clock_gettime(CLOCK_REALTIME, &rtclk_start_time);
 	printf("Thread idx=%d timer started\n", threadParams->threadIdx);
-	
+	printf("RT clock start seconds = %ld, nanoseconds = %ld\n", \
+       rtclk_start_time.tv_sec, rtclk_start_time.tv_nsec);
 	int i;
     threadParams_t *threadParams = (threadParams_t *)threadp;
 
@@ -123,10 +128,7 @@ void *incThread(void *threadp)
     }
 	rt_precision.y = 30.05*3.5;
 	printf("The precision value for x is: %0.2f and y is: %0.2f\n",rt_precision.x, rt_precision.y);
-	clock_gettime(CLOCK_REALTIME, &rtclk_stop_time);
-	printf("Thread idx=%d timer stopped\n", threadParams->threadIdx);
 	loop++;
-	
 	   while(loop < 5)
 		{
 	   int temp = 100*loop/13;
@@ -134,28 +136,19 @@ void *incThread(void *threadp)
 	   printf("thread[%d] is: ?\n", loop);
 	   loop++;
 		}
-	printf("In thread loop before 1st round\n");
-	}
-       sem_post(&sbsem);
-	   sem_post(&second_pass);
-}
-
-/* Thread #2*/
-void *decThread(void *threadp)
-{
-sem_wait(&sbsem);
-    threadParams_t *threadParams = (threadParams_t *)threadp;	
-	/*Read precision values from rt_precision*/
-	printf("\nThread idx=%d read Thread idx=0 values:\n", threadParams->threadIdx);
-	printf("RT clock start seconds = %ld, nanoseconds = %ld\n", 
-         rtclk_start_time.tv_sec, rtclk_start_time.tv_nsec);
-	printf("RT clock stop seconds = %ld, nanoseconds = %ld\n", 
+		
+	/* End time stamp */
+	clock_gettime(CLOCK_REALTIME, &rtclk_stop_time);
+	printf("Thread idx=%d timer stopped\n", threadParams->threadIdx);
+	printf("RT clock stop seconds = %ld, nanoseconds = %ld\n", \
          rtclk_stop_time.tv_sec, rtclk_stop_time.tv_nsec);
 	printf("RT clock delta seconds = %ld, nanoseconds = %ld\n", 
          (rtclk_stop_time.tv_sec - rtclk_start_time.tv_sec), \
 		 (rtclk_stop_time.tv_nsec - rtclk_start_time.tv_nsec));
-		sem_post(&sbsem); 
-
+	}
+       printf("\n");
+	   sem_post(&sbsem);
+	   sem_post(&second_pass);
 }
 
 int main (int argc, char *argv[])
@@ -200,11 +193,8 @@ int main (int argc, char *argv[])
    rt_precision.x = 33.19;
    rt_precision.y = 0;  
    threadParams[i].threadIdx=i;
-   int test = 0;
-  if(test ==0)
-   {
 
-	  pthread_create(&threads[i],   // pointer to thread descriptor
+  pthread_create(&threads[i],   // pointer to thread descriptor
                   rt_sched_attr, // use rt attributes
                   incThread, // thread function entry point
                   (void *)&(threadParams[i]) // parameters to pass in
@@ -217,25 +207,7 @@ int main (int argc, char *argv[])
        perror("pthread_create");
        exit(ERROR);
    }
-	
-   }
-   else
-   {
 
-   /*go to next thread */
-   i++;
-   threadParams[i].threadIdx=i;
-   pthread_create(&threads[i], rt_sched_attr, decThread, (void *)&(threadParams[i]));
-   
-   /* Check for NULL */
-	if (tc)
-   {
-       printf("ERROR; pthread_create() rc is %d\n", rc);
-       perror("pthread_create");
-       exit(ERROR);
-   }
-
-   }
      sem_post(&sbsem); 
    int loop = 0;
       /* CRITICAL SECTION  */
@@ -243,10 +215,19 @@ int main (int argc, char *argv[])
    /*****************Take 5 frames***********/
    while(loop < 5)
    {
-	   int temp = 100*loop/13;
-	   FIB_TEST(50,9999);
-	   printf("count[%d] is: %d\n", loop, temp);
-	   loop++;
+	/* start frames time stamp */ 
+	clock_gettime(CLOCK_REALTIME, &frame_start_time[loop]);
+	printf("RT clock start seconds = %ld, nanoseconds = %ld\n", \
+    frame_start_time[loop].tv_sec, frame_start_time[loop].tv_nsec);
+	int temp = 100*loop/13;
+	FIB_TEST(50,9999);
+	printf("count[%d] is: %d\n", loop, temp);
+	loop++;
+	/* End time stamp */
+	clock_gettime(CLOCK_REALTIME, &frame_stop_time[loop]);
+	printf("RT clock stop seconds = %ld, nanoseconds = %ld\n", \
+    frame_stop_time[loop].tv_sec, frame_stop_time[loop].tv_nsec);	
+	
    }
      sem_post(&sbsem); 
 
@@ -256,7 +237,6 @@ int main (int argc, char *argv[])
    /*****************Take 5 frames***********/
    while(loop < 5)
    {
-	   
 	   int temp = 100*loop/13;
 	   FIB_TEST(50,9999);
 	   printf("count_x[%d] is: %d\n", loop, temp);
