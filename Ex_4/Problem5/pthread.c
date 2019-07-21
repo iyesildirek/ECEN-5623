@@ -13,7 +13,7 @@
 * - incdecthread/pthread.c
 * - example-sync/deadlock.c
 * Compile code by using the gcc command below:
-* $ gcc pthread.c -o3 a.out -lpthread -Wall
+* $ gcc pthread.c -o a.out -lpthread -Wall
 * or use the Makefile and type "make"
 * Note: Run code as root (FIFO schedule).
 *******************************************/

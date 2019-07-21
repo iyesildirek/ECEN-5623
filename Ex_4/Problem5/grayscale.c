@@ -1,4 +1,3 @@
-#include "brighten.h"
 #include "sharpen.h"
 #include "problem5.h"
 

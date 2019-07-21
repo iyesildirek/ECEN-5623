@@ -1,40 +1,25 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <fcntl.h>
-
-
-#define IMG_HEIGHT (300)
-#define IMG_WIDTH (400)
-
-typedef double FLOAT;
-
-typedef unsigned int UINT32;
-typedef unsigned long long int UINT64;
-typedef unsigned char UINT8;
+#include "sharpen.h"
+#include "problem5.h"
 
 // PPM Edge Enhancement Code
 //
 UINT8 header[22];
-UINT8 R[IMG_HEIGHT*IMG_WIDTH];
-UINT8 G[IMG_HEIGHT*IMG_WIDTH];
-UINT8 B[IMG_HEIGHT*IMG_WIDTH];
-UINT8 convR[IMG_HEIGHT*IMG_WIDTH];
-UINT8 convG[IMG_HEIGHT*IMG_WIDTH];
-UINT8 convB[IMG_HEIGHT*IMG_WIDTH];
-
-#define K 4.0
+UINT8 R[1280*960];
+UINT8 G[1280*960];
+UINT8 B[1280*960];
+UINT8 convR[1280*960];
+UINT8 convG[1280*960];
+UINT8 convB[1280*960];
 
 FLOAT PSF[9] = {-K/8.0, -K/8.0, -K/8.0, -K/8.0, K+1.0, -K/8.0, -K/8.0, -K/8.0, -K/8.0};
-
 
 int main(int argc, char *argv[])
 {
     int fdin, fdout, bytesRead=0, bytesLeft, i, j;
-    UINT64 microsecs=0, millisecs=0;
     FLOAT temp;
-
+	int IMG_HEIGHT = VRES;
+	int IMG_WIDTH = HRES;
+	
  if(argc < 3)
     {
        printf("Usage: sharpen input_file.ppm output_file.ppm\n");
@@ -46,11 +31,15 @@ int main(int argc, char *argv[])
         {
             printf("Error opening %s\n", argv[1]);
         }
+        else
+            printf("Input file = %s opened successfully\n", argv[1]);
 
         if((fdout = open(argv[2], (O_RDWR | O_CREAT), 0666)) < 0)
         {
             printf("Error opening %s\n", argv[1]);
         }
+        else
+            printf("Output file = %s opened successfully\n", argv[2]);
 	}
 
 
