@@ -64,97 +64,24 @@ int main(int argc, char *argv[])
 
     // Cover RGB data to gray
 	//y1 = r1*0.3 + 0.59*g1 + 0.11*b1;
-    // Skip first and last row, no neighbors to convolve with
 	int IMG_HEIGHT = VRES;
 	int IMG_WIDTH = HRES;
-    for(i=1; i<((IMG_HEIGHT)-1); i++)
+	
+	// Skip first header row
+    for(i=1; i<((IMG_HEIGHT)); i++)
     {
-        // Skip first and last column, no neighbors to convolve with
+        // cycle through all columns
         for(j=0; j<(IMG_WIDTH); j++)
         {
-		y1 = 0.3*convR[(i*IMG_WIDTH)+j] + 0.59*convG[(i*IMG_WIDTH)+j] + 0.11*convB[(i*IMG_WIDTH)+j];
+		y1 = 0.3*convR[(i*IMG_WIDTH)+j] + \
+		0.59*convG[(i*IMG_WIDTH)+j] \
+		+ 0.11*convB[(i*IMG_WIDTH)+j];
 		convR[(i*IMG_WIDTH)+j]= y1;
 		convG[(i*IMG_WIDTH)+j]= y1;
 		convB[(i*IMG_WIDTH)+j]= y1;
 		}
 	}
 	
-	/*
-	for(i=1; i<VRES*HRES-1; i++)
-    {
-		y1 = 0.3*convR[i] + 0.59*convG[i] + 0.11*convB[i];
-		convR[i]= y1;
-		convG[i]= y1;
-		convB[i]= y1;
-    }
-	*/
-	
-	
-	
-	
-	/********************/
-	/*
-	    // Skip first and last row, no neighbors to convolve with
-    for(i=1; i<((IMG_HEIGHT)-0); i++)
-    {
-        // Skip first and last column, no neighbors to convolve with
-        for(j=0; j<(IMG_WIDTH); j++)
-        {
-            temp=0;
-            temp += (PSF[0] * (FLOAT)R[((i-1)*IMG_WIDTH)+j-1]);
-            temp += (PSF[1] * (FLOAT)R[((i-1)*IMG_WIDTH)+j]);
-            temp += (PSF[2] * (FLOAT)R[((i-1)*IMG_WIDTH)+j+1]);
-            temp += (PSF[3] * (FLOAT)R[((i)*IMG_WIDTH)+j-1]);
-            temp += (PSF[4] * (FLOAT)R[((i)*IMG_WIDTH)+j]);
-            temp += (PSF[5] * (FLOAT)R[((i)*IMG_WIDTH)+j+1]);
-            temp += (PSF[6] * (FLOAT)R[((i+1)*IMG_WIDTH)+j-1]);
-            temp += (PSF[7] * (FLOAT)R[((i+1)*IMG_WIDTH)+j]);
-            temp += (PSF[8] * (FLOAT)R[((i+1)*IMG_WIDTH)+j+1]);
-	    if(temp<0.0) temp=0.0;
-	    if(temp>255.0) temp=255.0;
-	    convR[(i*IMG_WIDTH)+j]=(UINT8)temp;
-
-            temp=0;
-            temp += (PSF[0] * (FLOAT)G[((i-1)*IMG_WIDTH)+j-1]);
-            temp += (PSF[1] * (FLOAT)G[((i-1)*IMG_WIDTH)+j]);
-            temp += (PSF[2] * (FLOAT)G[((i-1)*IMG_WIDTH)+j+1]);
-            temp += (PSF[3] * (FLOAT)G[((i)*IMG_WIDTH)+j-1]);
-            temp += (PSF[4] * (FLOAT)G[((i)*IMG_WIDTH)+j]);
-            temp += (PSF[5] * (FLOAT)G[((i)*IMG_WIDTH)+j+1]);
-            temp += (PSF[6] * (FLOAT)G[((i+1)*IMG_WIDTH)+j-1]);
-            temp += (PSF[7] * (FLOAT)G[((i+1)*IMG_WIDTH)+j]);
-            temp += (PSF[8] * (FLOAT)G[((i+1)*IMG_WIDTH)+j+1]);
-	    if(temp<0.0) temp=0.0;
-	    if(temp>255.0) temp=255.0;
-	    convG[(i*IMG_WIDTH)+j]=(UINT8)temp;
-
-            temp=0;
-            temp += (PSF[0] * (FLOAT)B[((i-1)*IMG_WIDTH)+j-1]);
-            temp += (PSF[1] * (FLOAT)B[((i-1)*IMG_WIDTH)+j]);
-            temp += (PSF[2] * (FLOAT)B[((i-1)*IMG_WIDTH)+j+1]);
-            temp += (PSF[3] * (FLOAT)B[((i)*IMG_WIDTH)+j-1]);
-            temp += (PSF[4] * (FLOAT)B[((i)*IMG_WIDTH)+j]);
-            temp += (PSF[5] * (FLOAT)B[((i)*IMG_WIDTH)+j+1]);
-            temp += (PSF[6] * (FLOAT)B[((i+1)*IMG_WIDTH)+j-1]);
-            temp += (PSF[7] * (FLOAT)B[((i+1)*IMG_WIDTH)+j]);
-            temp += (PSF[8] * (FLOAT)B[((i+1)*IMG_WIDTH)+j+1]);
-	    if(temp<0.0) temp=0.0;
-	    if(temp>255.0) temp=255.0;
-	    convB[(i*IMG_WIDTH)+j]=(UINT8)temp;
-        }
-    }
-	*/
-	/******************************************************/
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
     write(fdout, (void *)header, 21);
 
     // Write RGB data
