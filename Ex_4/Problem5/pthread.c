@@ -43,6 +43,7 @@
 #include "brighten.h"
 #include "sharpen.h"
 #include "problem5.h"
+#include "capture.h"
 
 #define NUM_THREADS 2
 #define NUM_CPUS (1)
