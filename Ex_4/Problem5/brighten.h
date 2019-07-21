@@ -6,7 +6,6 @@
 * or use the Makefile and type "make"
 * Note: Run code as root (FIFO schedule).
 *******************************************/
-
 #ifndef BRIGHT
 #define BRIGHT
 

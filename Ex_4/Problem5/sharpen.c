@@ -1,5 +1,7 @@
 #include "sharpen.h"
+#include "brighten.h"
 #include "problem5.h"
+
 
 // PPM Edge Enhancement Code
 //

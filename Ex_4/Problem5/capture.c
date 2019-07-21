@@ -34,6 +34,9 @@
 #include <errno.h>
 #include "capture.h"
 
+volatile int HRES = 640;
+volatile int VRES = 480;
+
 static void errno_exit(const char *s)
 {
         fprintf(stderr, "%s error %d, %s\n", s, errno, strerror(errno));
@@ -649,10 +652,9 @@ static void init_device(void)
 
     if (force_format)
     {
-        printf("FORCING FORMAT\n");
         fmt.fmt.pix.width       = HRES;
         fmt.fmt.pix.height      = VRES;
-
+		printf("FORCING FORMAT to %d x %d\n", HRES, VRES);
         // Specify the Pixel Coding Formate here
 
         // This one work for Logitech C200

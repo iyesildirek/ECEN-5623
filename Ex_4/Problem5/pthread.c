@@ -32,17 +32,9 @@
 * @version 1.0
 *
 ********************************************************/
-#include <pthread.h>
-#include <sched.h>
-#include <signal.h>
-#include <semaphore.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <errno.h>
-
+#include "problem5.h"
 #include "brighten.h"
 #include "sharpen.h"
-#include "problem5.h"
 #include "capture.h"
 
 #define NUM_THREADS 2

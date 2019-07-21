@@ -3,8 +3,8 @@
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 #define COLOR_CONVERT
-#define HRES 320
-#define VRES 240
+//#define HRES 320
+//#define VRES 240
 #define HRES_STR "320"
 #define VRES_STR "240"
 

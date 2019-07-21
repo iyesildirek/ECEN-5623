@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "brighten.h"
+
 
 typedef double FLOAT;
 typedef unsigned int UINT32;

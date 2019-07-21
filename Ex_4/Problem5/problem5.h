@@ -6,11 +6,16 @@
 * or use the Makefile and type "make"
 * Note: Run code as root (FIFO schedule).
 *******************************************/
-
 #ifndef P5
 #define P5
 
-
+#include <pthread.h>
+#include <sched.h>
+#include <signal.h>
+#include <semaphore.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <errno.h>
 #include <assert.h>
 #include <getopt.h>             /* getopt_long() */
 #include <errno.h>
