@@ -14,28 +14,10 @@
  *
  * Compile by terminal: $ gcc capture.c -o capture
  */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <getopt.h>             /* getopt_long() */
-#include <fcntl.h>              /* low-level i/o */
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/mman.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-#include <time.h>
-
-/*capture specific*/
-#include <errno.h>
+#include "problem5.h"
+#include "brighten.h"
+#include "sharpen.h"
 #include "capture.h"
-
-volatile int HRES = 640;
-volatile int VRES = 480;
 
 static void errno_exit(const char *s)
 {
@@ -313,7 +295,7 @@ static void mainloop(void)
             FD_SET(fd, &fds);
 
             /* Timeout. */
-            tv.tv_sec = 2;
+            tv.tv_sec = 3;
             tv.tv_usec = 0;
 
             r = select(fd + 1, &fds, NULL, NULL, &tv);

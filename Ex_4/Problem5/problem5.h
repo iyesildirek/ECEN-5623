@@ -30,7 +30,9 @@
 /* End prototype list */
 
 /* Global variables */
-volatile int HRES = 640;
-volatile int VRES = 480;
+//Use values like:
+// 160x120, 320x240, or 640x480
 
+volatile int HRES = 160;
+volatile int VRES = 120;
 #endif

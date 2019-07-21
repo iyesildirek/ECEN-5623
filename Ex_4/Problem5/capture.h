@@ -1,12 +1,15 @@
 #ifndef CAP
 #define CAP
 
+#include <errno.h>
+
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 #define COLOR_CONVERT
-//#define HRES 320
-//#define VRES 240
-#define HRES_STR "320"
-#define VRES_STR "240"
+
+/* Need to redefine based on user input */
+#define HRES_STR "160"
+#define VRES_STR "120"
+
 
 /* Global Variables */
 // Format is used by a number of functions, so made as a file global
