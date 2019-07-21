@@ -7,6 +7,10 @@
 * Note: Run code as root (FIFO schedule).
 *******************************************/
 
+#ifndef P5
+#define P5
+
+
 #include <assert.h>
 #include <getopt.h>             /* getopt_long() */
 #include <errno.h>
@@ -23,3 +27,5 @@
 /* Global variables */
 volatile int HRES = 640;
 volatile int VRES = 480;
+
+#endif
