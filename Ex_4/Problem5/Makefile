@@ -16,7 +16,7 @@ all:	problem5 simple test brighten sharpen grayscale
 
 clean:
 	-rm -f *.o *.d
-	-rm -f problem5 simple test bright sharpen grayscale
+	-rm -f problem5 simple test brighten sharpen grayscale
 
 problem5: problem5.o
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread -lrt

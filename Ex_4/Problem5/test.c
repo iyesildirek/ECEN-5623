@@ -90,7 +90,7 @@ static int xioctl(int fh, int request, void *arg)
 }
 
 char ppm_header[]="P6\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
-char ppm_dumpname[]="test000.ppm";
+char ppm_dumpname[]="test00.ppm";
 
 static void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
 {
@@ -122,7 +122,7 @@ static void dump_ppm(const void *p, int size, unsigned int tag, struct timespec 
 
 
 char pgm_header[]="P5\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
-char pgm_dumpname[]="test000.pgm";
+char pgm_dumpname[]="test00.pgm";
 
 static void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time)
 {
