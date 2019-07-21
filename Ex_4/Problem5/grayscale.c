@@ -11,15 +11,12 @@ UINT8 B[1280*960];
 UINT8 convR[1280*960];
 UINT8 convG[1280*960];
 UINT8 convB[1280*960];
-FLOAT PSF[9] = {-K/8.0, -K/8.0, -K/8.0, -K/8.0, K+1.0, -K/8.0, -K/8.0, -K/8.0, -K/8.0};
 
 int main(int argc, char *argv[])
 {
-    int fdin, fdout, bytesRead=0, bytesLeft, i, j;
-    UINT64 microsecs=0, millisecs=0;
-    FLOAT temp;
-	int y1;
-	
+    int fdin, fdout, bytesRead=0, bytesLeft, i, j, y1;
+	int IMG_HEIGHT = VRES;
+	int IMG_WIDTH = HRES;
     /* Open input & output file*/
     if(argc < 3)
     {
@@ -32,22 +29,21 @@ int main(int argc, char *argv[])
         {
             printf("Error opening %s\n", argv[1]);
         }
-        //else
-        //    printf("File opened successfully\n");
+        else
+            printf("Input file = %s opened successfully\n", argv[1]);
 
         if((fdout = open(argv[2], (O_RDWR | O_CREAT), 0666)) < 0)
         {
             printf("Error opening %s\n", argv[1]);
         }
-        //else
-        //    printf("Output file=%s opened successfully\n", "sharpen.ppm");
+        else
+            printf("Output file = %s opened successfully\n", argv[2]);
     }
 
     bytesLeft=21;
 
     do
     {
-
         bytesRead=read(fdin, (void *)header, bytesLeft);
         bytesLeft -= bytesRead;
     } while(bytesLeft > 0);
@@ -62,11 +58,10 @@ int main(int argc, char *argv[])
         read(fdin, (void *)&B[i], 1); convB[i]=B[i];
     }
 
-    // Cover RGB data to gray
-	//y1 = r1*0.3 + 0.59*g1 + 0.11*b1;
-	int IMG_HEIGHT = VRES;
-	int IMG_WIDTH = HRES;
-	
+    /********************************** 
+	* Cover RGB data to gray
+	* y1 = r1*0.3 + 0.59*g1 + 0.11*b1;
+	**********************************/
 	// Skip first header row
     for(i=1; i<((IMG_HEIGHT)); i++)
     {
@@ -84,7 +79,7 @@ int main(int argc, char *argv[])
 	
     write(fdout, (void *)header, 21);
 
-    // Write RGB data
+    // Write converted grayscale data
     for(i=0; i<VRES*HRES; i++)
     {
         write(fdout, (void *)&convR[i], 1);
@@ -92,8 +87,6 @@ int main(int argc, char *argv[])
         write(fdout, (void *)&convB[i], 1);
     }
 
-
     close(fdin);
     close(fdout);
- 
 }
