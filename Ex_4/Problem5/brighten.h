@@ -7,6 +7,9 @@
 * Note: Run code as root (FIFO schedule).
 *******************************************/
 
+#ifndef BRIGHT
+#define BRIGHT
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -21,3 +24,5 @@ void writeppm(unsigned char *buffer, int bufferlen,
               char *header, int headerlen,
               char *file);			 
 /* End prototype list */
+
+#endif

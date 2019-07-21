@@ -1,3 +1,6 @@
+#ifndef SHARP
+#define SHARP
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -10,4 +13,4 @@ typedef unsigned char UINT8;
 
 #define K 4.0
 
-
+#endif
