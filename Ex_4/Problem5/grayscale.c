@@ -18,10 +18,12 @@ int main(int argc, char *argv[])
     int fdin, fdout, bytesRead=0, bytesLeft, i, j;
     UINT64 microsecs=0, millisecs=0;
     FLOAT temp;
-    
+
+	
+    /* Open input & output file*/
     if(argc < 3)
     {
-       printf("Usage: sharpen input_file.ppm output_file.ppm\n");
+       printf("Usage: grayscale input_file.ppm output_file.ppm\n");
        exit(-1);
     }
     else
@@ -43,11 +45,9 @@ int main(int argc, char *argv[])
 
     bytesLeft=21;
 
-    //printf("Reading header\n");
-
     do
     {
-        //printf("bytesRead=%d, bytesLeft=%d\n", bytesRead, bytesLeft);
+
         bytesRead=read(fdin, (void *)header, bytesLeft);
         bytesLeft -= bytesRead;
     } while(bytesLeft > 0);
@@ -89,29 +89,29 @@ int main(int argc, char *argv[])
 	    convR[(i*HRES)+j]=(UINT8)temp;
 		
             temp=0;
-            temp += (PSF[0] * (FLOAT)R[((i-1)*HRES)+j-1]);
-            temp += (PSF[1] * (FLOAT)R[((i-1)*HRES)+j]);
-            temp += (PSF[2] * (FLOAT)R[((i-1)*HRES)+j+1]);
-            temp += (PSF[3] * (FLOAT)R[((i)*HRES)+j-1]);
-            temp += (PSF[4] * (FLOAT)R[((i)*HRES)+j]);
-            temp += (PSF[5] * (FLOAT)R[((i)*HRES)+j+1]);
-            temp += (PSF[6] * (FLOAT)R[((i+1)*HRES)+j-1]);
-            temp += (PSF[7] * (FLOAT)R[((i+1)*HRES)+j]);
-            temp += (PSF[8] * (FLOAT)R[((i+1)*HRES)+j+1]);
+            temp += (PSF[0] * (FLOAT)G[((i-1)*HRES)+j-1]);
+            temp += (PSF[1] * (FLOAT)G[((i-1)*HRES)+j]);
+            temp += (PSF[2] * (FLOAT)G[((i-1)*HRES)+j+1]);
+            temp += (PSF[3] * (FLOAT)G[((i)*HRES)+j-1]);
+            temp += (PSF[4] * (FLOAT)G[((i)*HRES)+j]);
+            temp += (PSF[5] * (FLOAT)G[((i)*HRES)+j+1]);
+            temp += (PSF[6] * (FLOAT)G[((i+1)*HRES)+j-1]);
+            temp += (PSF[7] * (FLOAT)G[((i+1)*HRES)+j]);
+            temp += (PSF[8] * (FLOAT)G[((i+1)*HRES)+j+1]);
 			if(temp<0.0) temp=0.0;
 	    if(temp>255.0) temp=255.0;
 	    convG[(i*HRES)+j]=(UINT8)temp;
 
             temp=0;
-            temp += (PSF[0] * (FLOAT)R[((i-1)*HRES)+j-1]);
-            temp += (PSF[1] * (FLOAT)R[((i-1)*HRES)+j]);
-            temp += (PSF[2] * (FLOAT)R[((i-1)*HRES)+j+1]);
-            temp += (PSF[3] * (FLOAT)R[((i)*HRES)+j-1]);
-            temp += (PSF[4] * (FLOAT)R[((i)*HRES)+j]);
-            temp += (PSF[5] * (FLOAT)R[((i)*HRES)+j+1]);
-            temp += (PSF[6] * (FLOAT)R[((i+1)*HRES)+j-1]);
-            temp += (PSF[7] * (FLOAT)R[((i+1)*HRES)+j]);
-            temp += (PSF[8] * (FLOAT)R[((i+1)*HRES)+j+1]);
+            temp += (PSF[0] * (FLOAT)B[((i-1)*HRES)+j-1]);
+            temp += (PSF[1] * (FLOAT)B[((i-1)*HRES)+j]);
+            temp += (PSF[2] * (FLOAT)B[((i-1)*HRES)+j+1]);
+            temp += (PSF[3] * (FLOAT)B[((i)*HRES)+j-1]);
+            temp += (PSF[4] * (FLOAT)B[((i)*HRES)+j]);
+            temp += (PSF[5] * (FLOAT)B[((i)*HRES)+j+1]);
+            temp += (PSF[6] * (FLOAT)B[((i+1)*HRES)+j-1]);
+            temp += (PSF[7] * (FLOAT)B[((i+1)*HRES)+j]);
+            temp += (PSF[8] * (FLOAT)B[((i+1)*HRES)+j+1]);
 	    if(temp<0.0) temp=0.0;
 	    if(temp>255.0) temp=255.0;
 	    convB[(i*HRES)+j]=(UINT8)temp;
