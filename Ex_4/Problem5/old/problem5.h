@@ -6,7 +6,6 @@
 * or use the Makefile and type "make"
 * Note: Run code as root (FIFO schedule).
 *******************************************/
-
 #ifndef P5
 #define P5
 
@@ -34,6 +33,6 @@
 //Use values like:
 // 160x120, 320x240, or 640x480
 
-volatile int HRES = 640;
-volatile int VRES = 480;
+extern volatile int HRES = 160;
+extern volatile int VRES = 120;
 #endif

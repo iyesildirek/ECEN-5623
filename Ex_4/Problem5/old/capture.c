@@ -12,17 +12,8 @@
  *      This program is provided with the V4L2 API
  * see http://linuxtv.org/docs.php for more information
  *
- * Compile by terminal: $ gcc capture.c problem5.h brighten.h sharpen.h capture.h -o capture
+ * Compile by terminal: $ gcc capture.c -o capture
  */
- 
- /********************************************
-* Code is base on the following code provided in class 
-* - simple-capture/capture.c
-* Compile code by using the gcc command below:
-* $ gcc capture.c problem5.h brighten.h sharpen.h capture.h -o capture
-* or use the Makefile and type "make"
-*******************************************/
-
 #include "problem5.h"
 #include "brighten.h"
 #include "sharpen.h"
@@ -304,7 +295,7 @@ static void mainloop(void)
             FD_SET(fd, &fds);
 
             /* Timeout. */
-            tv.tv_sec = 3;
+            tv.tv_sec = 2;
             tv.tv_usec = 0;
 
             r = select(fd + 1, &fds, NULL, NULL, &tv);
@@ -760,7 +751,8 @@ int main(int argc, char **argv)
         int idx;
         int c;
 
-        c = 'm';
+        c = getopt_long(argc, argv,
+                    short_options, long_options, &idx);
 
         if (-1 == c)
             break;
@@ -768,7 +760,6 @@ int main(int argc, char **argv)
         switch (c)
         {
             case 0: 
-			
                 break;
 
             case 'd':
@@ -821,4 +812,5 @@ int main(int argc, char **argv)
     close_device();
     fprintf(stderr, "\n");
     return 0;
-}*/
+}
+*/

@@ -1,0 +1,43 @@
+INCLUDE_DIRS = 
+LIB_DIRS = 
+CC=gcc
+
+CDEFS=
+CFLAGS= -O0 -g $(INCLUDE_DIRS) $(CDEFS) 
+LIBS= 
+
+HFILES= bright.h sharpen.h problem5.h capture.h
+CFILES= brighten.c sharpen.c grayscale.c capture.c pthread.c
+
+SRCS= ${HFILES} ${CFILES}
+OBJS= ${CFILES:.c=.o}
+
+#all: pthread
+all: brighten sharpen grayscale pthread capture
+
+clean:
+	-rm -f *.o *.d
+	-rm -f problem5 brighten sharpen grayscale pthread capture
+
+#test: test.o
+#	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread -lrt
+
+brighten: brighten.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread -lrt
+
+sharpen: sharpen.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread -lrt
+	
+grayscale: grayscale.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread -lrt	
+
+capture: capture.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread -lrt
+
+pthread: pthread.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread -lrt
+
+depend:
+
+.c.o:
+	$(CC) $(CFLAGS) -c $<

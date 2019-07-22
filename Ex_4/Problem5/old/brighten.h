@@ -2,8 +2,9 @@
 * Code is base on the following code provided in class 
 * - brighten_compare/c-brighten/brighten.c
 * Compile code by using the gcc command below:
-* $ gcc -o bright brighten.c brighten.h problem5.h  
+* $ gcc -o bright brighten.c 
 * or use the Makefile and type "make"
+* Note: Run code as root (FIFO schedule).
 *******************************************/
 #ifndef BRIGHT
 #define BRIGHT

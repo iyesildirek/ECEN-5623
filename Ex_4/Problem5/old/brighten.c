@@ -2,8 +2,9 @@
 * Code is base on the following code provided in class 
 * - brighten_compare/c-brighten/brighten.c
 * Compile code by using the gcc command below:
-* $ gcc -o bright brighten.c brighten.h problem5.h 
+* $ gcc -o bright brighten.c 
 * or use the Makefile and type "make"
+* Note: Run code as root (FIFO schedule).
 *******************************************/
 
 #include "brighten.h"
@@ -119,6 +120,7 @@ void writeppm(unsigned char *buffer, int bufferlen,
 #define PIXIDX ((i*col*chan)+(j*chan)+k)
 #define SAT (255)
 
+/*
 void main(int argc, char *argv[])
 {
   char header[512];
@@ -138,3 +140,4 @@ void main(int argc, char *argv[])
 
   writeppm(newimg, bufflen, header, hdrlen, "brighter.ppm");
 }
+*/

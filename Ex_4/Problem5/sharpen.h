@@ -1,3 +1,11 @@
+/********************************************
+* Code is base on the following code provided in class 
+* - sharpen-psf/sharpen.c
+* Compile code by using the gcc command below:
+* $ gcc -o sharpen sharpen.c sharpen.h problem5.h
+* or use the Makefile and type "make"
+*******************************************/
+
 #ifndef SHARP
 #define SHARP
 

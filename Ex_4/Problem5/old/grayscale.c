@@ -1,11 +1,3 @@
-/********************************************
-* Code is base on the following code provided in class 
-* - sharpen-psf/sharpen.c
-* Compile code by using the gcc command below:
-* $ gcc -o grayscale grayscale.c sharpen.h problem5.h
-* or use the Makefile and type "make"
-*******************************************/
-
 #include "sharpen.h"
 #include "problem5.h"
 
@@ -19,12 +11,13 @@ UINT8 convR[1280*960];
 UINT8 convG[1280*960];
 UINT8 convB[1280*960];
 
+/*
 int main(int argc, char *argv[])
 {
     int fdin, fdout, bytesRead=0, bytesLeft, i, j, y1;
 	int IMG_HEIGHT = VRES;
 	int IMG_WIDTH = HRES;
-    /* Open input & output file*/
+    // Open input & output file
     if(argc < 3)
     {
        printf("Usage: grayscale input_file.ppm output_file.ppm\n");
@@ -64,12 +57,12 @@ int main(int argc, char *argv[])
         read(fdin, (void *)&G[i], 1); convG[i]=G[i];
         read(fdin, (void *)&B[i], 1); convB[i]=B[i];
     }
-
+*/
     /********************************** 
 	* Cover RGB data to gray
 	* y1 = r1*0.3 + 0.59*g1 + 0.11*b1;
 	**********************************/
-	// Skip first header row
+/*	// Skip first header row
     for(i=1; i<((IMG_HEIGHT)); i++)
     {
         // cycle through all columns
@@ -97,3 +90,4 @@ int main(int argc, char *argv[])
     close(fdin);
     close(fdout);
 }
+*/

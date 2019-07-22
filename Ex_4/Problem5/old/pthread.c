@@ -1,3 +1,12 @@
+/*******************************************************************************
+* Include two threads and one should update a timespec structure contained in a 
+* structure that includes a double precision attitude state of {X,Y,Z acceleration 
+* and Roll, Pitch, Yaw rates at Sample_Time} (just make up values for the 
+* navigational state and see http://linux.die.net/man/3/clock_gettime for how to 
+* get a precision timestamp). The second thread should read the times-stamped 
+* state without the possibility of data corruption (partial update).
+*******************************************************************************/
+
 /********************************************
 * Code is base on the following code provided in class 
 * - POSIX-Examples/posix_clock.c
@@ -11,8 +20,11 @@
 
 /********************************************************
 * @file pthread.c
-* @brief This source file contains code that utilizes 
-* semaphores in order to synchronize a thread and main.
+* @brief This source file contains code that implements two
+* threads that share a timing global variable. One thread 
+* performs operations and stores the timing value in the global
+* variables and the other thread waits unitl the first thread 
+* unlocks the semaphore and then reads the results.
 * 
 *
 * @author Ismail Yesildirek 
@@ -83,7 +95,7 @@ static struct timespec frame_start_time[6] = {0, 0};
 static struct timespec frame_stop_time[6] = {0, 0};
 
 /* Thread #1*/
-void *incThread(void *threadp)
+void *transform(void *threadp)
 {
     /* CRITICAL SECTION  */
     sem_wait(&sbsem);
@@ -104,7 +116,7 @@ void *incThread(void *threadp)
 	
 	  /* start time stamp */ 
 	clock_gettime(CLOCK_REALTIME, &rtclk_start_time);
-	printf("Thread idx=%d Frame transform timer started\n", threadParams->threadIdx);
+	printf("Thread idx=%d timer started\n", threadParams->threadIdx);
 	printf("RT clock start seconds = %ld, nanoseconds = %ld\n", \
        rtclk_start_time.tv_sec, rtclk_start_time.tv_nsec);
 	int i;
@@ -127,7 +139,7 @@ void *incThread(void *threadp)
 		
 	/* End time stamp */
 	clock_gettime(CLOCK_REALTIME, &rtclk_stop_time);
-	printf("Thread idx=%d Frame transform timer stopped\n", threadParams->threadIdx);
+	printf("Thread idx=%d timer stopped\n", threadParams->threadIdx);
 	printf("RT clock stop seconds = %ld, nanoseconds = %ld\n", \
          rtclk_stop_time.tv_sec, rtclk_stop_time.tv_nsec);
 	printf("RT clock delta seconds = %ld, nanoseconds = %ld\n", 
@@ -184,7 +196,7 @@ int main (int argc, char *argv[])
 
   pthread_create(&threads[i],   // pointer to thread descriptor
                   rt_sched_attr, // use rt attributes
-                  incThread, // thread function entry point
+                  transform, // thread function entry point
                   (void *)&(threadParams[i]) // parameters to pass in
                  );
 	
@@ -200,27 +212,99 @@ int main (int argc, char *argv[])
    int loop = 0;
       /* CRITICAL SECTION  */
 	     sem_wait(&sbsem);   
+	
+	/********************Camera snaps************************/	 
+	    dev_name = "/dev/video0";
+
+    for (;;)
+    {
+        int idx;
+        int c;
+
+        c = getopt_long(argc, argv,
+                    short_options, long_options, &idx);
+
+        if (-1 == c)
+            break;
+
+        switch (c)
+        {
+            case 0: /* getopt_long() flag */
+                break;
+
+            case 'd':
+                dev_name = optarg;
+                break;
+
+            case 'h':
+                usage(stdout, argc, argv);
+                exit(EXIT_SUCCESS);
+
+            case 'm':
+                io = IO_METHOD_MMAP;
+                break;
+
+            case 'r':
+                io = IO_METHOD_READ;
+                break;
+
+            case 'u':
+                io = IO_METHOD_USERPTR;
+                break;
+
+            case 'o':
+                out_buf++;
+                break;
+
+            case 'f':
+                force_format++;
+                break;
+
+            case 'c':
+                errno = 0;
+                frame_count = strtol(optarg, NULL, 0);
+                if (errno)
+                        errno_exit(optarg);
+                break;
+
+            default:
+                usage(stderr, argc, argv);
+                exit(EXIT_FAILURE);
+        }
+    }
+
+    open_device();
+    init_device();
+    start_capturing();
+    mainloop();
+    stop_capturing();
+    uninit_device();
+    close_device();
+    fprintf(stderr, "\n");
+	
+	/********************End of Camera snaps*****************/	 
+	
    /*****************Take 5 frames***********/
    while(loop < 5)
    {
 	/* start frames time stamp */ 
 	clock_gettime(CLOCK_REALTIME, &frame_start_time[loop]);
-	printf("Frame #%d start seconds = %ld, nanoseconds = %ld\n", \
-    loop, frame_start_time[loop].tv_sec, frame_start_time[loop].tv_nsec);
+	printf("RT clock start seconds = %ld, nanoseconds = %ld\n", \
+    frame_start_time[loop].tv_sec, frame_start_time[loop].tv_nsec);
 	int temp = 100*loop/13;
 	FIB_TEST(50,9999);
 	printf("count[%d] is: %d\n", loop, temp);
+	loop++;
 	/* End time stamp */
 	clock_gettime(CLOCK_REALTIME, &frame_stop_time[loop]);
-	printf("Frame #%d  stop seconds = %ld, nanoseconds = %ld\n", \
-    loop, frame_stop_time[loop].tv_sec, frame_stop_time[loop].tv_nsec);	
-	loop++;
+	printf("RT clock stop seconds = %ld, nanoseconds = %ld\n", \
+    frame_stop_time[loop].tv_sec, frame_stop_time[loop].tv_nsec);	
+	
    }
      sem_post(&sbsem); 
 
-   /* Wait until thread processes image */
+   /* CRITICAL SECTION  */
    sem_wait(&second_pass);
-   printf("In main thread post transformation.\n");
 	loop = 0; 
    /*****************Take 5 frames***********/
    while(loop < 5)

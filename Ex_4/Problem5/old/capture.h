@@ -1,28 +1,3 @@
-/*
- *
- *  Adapted by Sam Siewert for use with UVC web cameras and Bt878 frame
- *  grabber NTSC cameras to acquire digital video from a source,
- *  time-stamp each frame acquired, save to a PGM or PPM file.
- *
- *  The original code adapted was open source from V4L2 API and had the
- *  following use and incorporation policy:
- * 
- *  This program can be used and distributed without restrictions.
- *
- *      This program is provided with the V4L2 API
- * see http://linuxtv.org/docs.php for more information
- *
- * Compile by terminal: $ gcc capture.c problem5.h brighten.h sharpen.h capture.h -o capture
- */
- 
-/********************************************
-* Code is base on the following code provided in class 
-* - simple-capture/capture.c
-* Compile code by using the gcc command below:
-* $ gcc capture.c problem5.h brighten.h sharpen.h capture.h -o capture
-* or use the Makefile and type "make"
-*******************************************/
-
 #ifndef CAP
 #define CAP
 
@@ -51,7 +26,7 @@ static int              frame_count = 5;
 unsigned int framecnt=0;
 unsigned char bigbuffer[(1280*960)];
 static const char short_options[10] = "d:hmruofc:";
-/*static const struct option
+static const struct option
 long_options[] = {
         { "device", required_argument, NULL, 'd' },
         { "help",   no_argument,       NULL, 'h' },
@@ -62,7 +37,7 @@ long_options[] = {
         { "format", no_argument,       NULL, 'f' },
         { "count",  required_argument, NULL, 'c' },
         { 0, 0, 0, 0 }
-};*/
+};
 enum io_method 
 {
         IO_METHOD_READ,

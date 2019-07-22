@@ -1,11 +1,3 @@
-/********************************************
-* Code is base on the following code provided in class 
-* - sharpen-psf/sharpen.c
-* Compile code by using the gcc command below:
-* $ gcc -o sharpen sharpen.c sharpen.h problem5.h
-* or use the Makefile and type "make"
-*******************************************/
-
 #include "sharpen.h"
 #include "brighten.h"
 #include "problem5.h"
@@ -22,7 +14,7 @@ UINT8 convG[1280*960];
 UINT8 convB[1280*960];
 
 FLOAT PSF[9] = {-K/8.0, -K/8.0, -K/8.0, -K/8.0, K+1.0, -K/8.0, -K/8.0, -K/8.0, -K/8.0};
-
+/*
 int main(int argc, char *argv[])
 {
     int fdin, fdout, bytesRead=0, bytesLeft, i, j;
@@ -138,3 +130,4 @@ int main(int argc, char *argv[])
     close(fdout);
  
 }
+*/
