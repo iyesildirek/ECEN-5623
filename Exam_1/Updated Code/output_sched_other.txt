@@ -1,0 +1,17 @@
+Aug  1 21:54:36 raspberrypi sched_Other: Thread idx=2 timer started
+Aug  1 21:54:36 raspberrypi sched_Other: Thread idx=2 timer stopped
+Aug  1 21:54:36 raspberrypi sched_Other: RT clock for thread 2 start seconds = 1564714476, nanoseconds = 765178406
+Aug  1 21:54:36 raspberrypi sched_Other: RT clock for thread 2 stop seconds = 1564714476, nanoseconds = 765817672
+Aug  1 21:54:36 raspberrypi sched_Other: RT clock for thread 2 DT seconds = 0, nanoseconds = 639266
+Aug  1 21:54:36 raspberrypi sched_Other: Thread idx=1 timer started
+Aug  1 21:54:36 raspberrypi sched_Other: Thread idx=1 timer stopped
+Aug  1 21:54:36 raspberrypi sched_Other: RT clock for thread 1 start seconds = 1564714476, nanoseconds = 764941429
+Aug  1 21:54:36 raspberrypi sched_Other: RT clock for thread 1 stop seconds = 1564714476, nanoseconds = 768250570
+Aug  1 21:54:36 raspberrypi sched_Other: RT clock for thread 1 DT seconds = 0, nanoseconds = 3309141
+Aug  1 21:54:36 raspberrypi sched_Other: Thread idx=0 timer started
+Aug  1 21:54:36 raspberrypi sched_Other: Thread idx=0 timer stopped
+Aug  1 21:54:36 raspberrypi sched_Other: RT clock for thread 0 start seconds = 1564714476, nanoseconds = 764883200
+Aug  1 21:54:36 raspberrypi sched_Other: RT clock for thread 0 stop seconds = 1564714476, nanoseconds = 768530672
+Aug  1 21:54:36 raspberrypi sched_Other: RT clock for thread 0 DT seconds = 0, nanoseconds = 3647472
+Aug  1 21:54:36 raspberrypi sched_Other: TEST COMPLETE: gsum[0]=4950, gsum[1]=14950, gsum[2]=24950, gsumall=44850
+Aug  1 21:54:36 raspberrypi sched_Other: TEST COMPLETE: testsum=44850, [n[n+1]]/2=44850
