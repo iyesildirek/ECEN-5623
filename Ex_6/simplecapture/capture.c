@@ -11,23 +11,64 @@
  *
  *      This program is provided with the V4L2 API
  * see http://linuxtv.org/docs.php for more information
- *
- * Compile by terminal: $ gcc capture.c -o capture
  */
-#include "capture.h"
-volatile int HRES = 160;
-volatile int VRES = 120;
-char ppm_header[]="P6\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
-char ppm_dumpname[]="pic000000.ppm";
-unsigned int framecnt = 0;
 
-void errno_exit(const char *s)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#include <getopt.h>             /* getopt_long() */
+#include <fcntl.h>              /* low-level i/o */
+#include <unistd.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/mman.h>
+#include <sys/ioctl.h>
+#include <linux/videodev2.h>
+#include <time.h>
+
+#define CLEAR(x) memset(&(x), 0, sizeof(x))
+#define HRES 640
+#define VRES 480
+#define HRES_STR "640"
+#define VRES_STR "480"
+
+// set frequency based buffers for 5 seconds
+#define ONE_HZ_BUFF 5
+#define TEN_HZ_BUFF 50
+
+// Format is used by a number of functions, so made as a file global
+static struct v4l2_format fmt;
+
+enum io_method 
+{
+        IO_METHOD_MMAP,
+};
+
+struct buffer 
+{
+        void   *start;
+        size_t  length;
+};
+
+static char            *dev_name;
+static enum io_method   io = IO_METHOD_MMAP;
+static int              fd = -1;
+struct buffer          *buffers;
+static unsigned int     n_buffers;
+static int              out_buf;
+static int              force_format=1;
+static int              frame_count = 5;
+
+static void errno_exit(const char *s)
 {
         fprintf(stderr, "%s error %d, %s\n", s, errno, strerror(errno));
         exit(EXIT_FAILURE);
 }
 
-int xioctl(int fh, int request, void *arg)
+static int xioctl(int fh, int request, void *arg)
 {
         int r;
 
@@ -40,18 +81,22 @@ int xioctl(int fh, int request, void *arg)
         return r;
 }
 
-void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
+char pgm_header[]="P5\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
+char pgm_dumpname[]="test00000000.pgm";
+
+static void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time)
 {
     int written, i, total, dumpfd;
-    snprintf(&ppm_dumpname[5], 9, "%06d", tag);
-    strncat(&ppm_dumpname[9], ".ppm", 5);
-    dumpfd = open(ppm_dumpname, O_WRONLY | O_NONBLOCK | O_CREAT, 00666);
+   
+    snprintf(&pgm_dumpname[4], 9, "%08d", tag);
+    strncat(&pgm_dumpname[12], ".pgm", 5);
+    dumpfd = open(pgm_dumpname, O_WRONLY | O_NONBLOCK | O_CREAT, 00666);
 
-    snprintf(&ppm_header[4], 11, "%010d", (int)time->tv_sec);
-    strncat(&ppm_header[14], " sec ", 5);
-    snprintf(&ppm_header[19], 11, "%010d", (int)((time->tv_nsec)/1000000));
-    strncat(&ppm_header[29], " msec \n"HRES_STR" "VRES_STR"\n255\n", 19);
-    written=write(dumpfd, ppm_header, sizeof(ppm_header));
+    snprintf(&pgm_header[4], 11, "%010d", (int)time->tv_sec);
+    strncat(&pgm_header[14], " sec ", 5);
+    snprintf(&pgm_header[19], 11, "%010d", (int)((time->tv_nsec)/1000000));
+    strncat(&pgm_header[29], " msec \n"HRES_STR" "VRES_STR"\n255\n", 19);
+    written=write(dumpfd, pgm_header, sizeof(pgm_header));
 
     total=0;
 
@@ -67,23 +112,6 @@ void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
     
 }
 
-
-/*
-// This is probably the most acceptable conversion from camera YUYV to RGB
-//
-// Wikipedia has a good discussion on the details of various conversions and cites good references:
-// http://en.wikipedia.org/wiki/YUV
-//
-// Also http://www.fourcc.org/yuv.php
-//
-// What's not clear without knowing more about the camera in question is how often U & V are sampled compared
-// to Y.
-//
-// E.g. YUV444, which is equivalent to RGB, where both require 3 bytes for each pixel
-//      YUV422, which we assume here, where there are 2 bytes for each pixel, with two Y samples for one U & V,
-//              or as the name implies, 4Y and 2 UV pairs
-//      YUV420, where for every 4 Ys, there is a single UV pair, 1.5 bytes for each pixel or 36 bytes for 24 pixels
-*/
 void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b)
 {
    int r1, g1, b1;
@@ -110,7 +138,10 @@ void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned c
    *b = b1 ;
 }
 
-void process_image(const void *p, int size)
+unsigned int framecnt=0;
+unsigned char bigbuffer[(1280*960)];
+
+static void process_image(const void *p, int size)
 {
     int i, newi, newsize=0;
     struct timespec frame_time;
@@ -127,36 +158,28 @@ void process_image(const void *p, int size)
     // processing you wish.
     //
 
-
-    if(fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YUYV)
+    if(fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_GREY)
     {
+        printf("Dump graymap as-is size %d\n", size);
+        dump_pgm(p, size, framecnt, &frame_time);
+    }
 
-#if defined(COLOR_CONVERT)
-        printf("Dump YUYV converted to RGB size %d\n", size);
-       
+    else if(fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YUYV)
+    {
+        printf("Dump YUYV converted to YY size %d\n", size);
         // Pixels are YU and YV alternating, so YUYV which is 4 bytes
-        // We want RGB, so RGBRGB which is 6 bytes
+        // We want Y, so YY which is 2 bytes
         //
-        for(i=0, newi=0; i<size; i=i+4, newi=newi+6)
+        for(i=0, newi=0; i<size; i=i+4, newi=newi+2)
         {
-            y_temp=(int)pptr[i]; u_temp=(int)pptr[i+1]; y2_temp=(int)pptr[i+2]; v_temp=(int)pptr[i+3];
-            yuv2rgb(y_temp, u_temp, v_temp, &bigbuffer[newi], &bigbuffer[newi+1], &bigbuffer[newi+2]);
-            yuv2rgb(y2_temp, u_temp, v_temp, &bigbuffer[newi+3], &bigbuffer[newi+4], &bigbuffer[newi+5]);
+            // Y1=first byte and Y2=third byte
+            bigbuffer[newi]=pptr[i];
+            bigbuffer[newi+1]=pptr[i+2];
         }
 
-        dump_ppm(bigbuffer, ((size*6)/4), framecnt, &frame_time);
-#else
-        printf("Grayscale N/A\n");
-
-#endif
-
+        dump_pgm(bigbuffer, (size/2), framecnt, &frame_time);
     }
 
-    else if(fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_RGB24)
-    {
-        printf("Dump RGB as-is size %d\n", size);
-        dump_ppm(p, size, framecnt, &frame_time);
-    }
     else
     {
         printf("ERROR - unknown dump format\n");
@@ -167,40 +190,12 @@ void process_image(const void *p, int size)
     fflush(stdout);
 }
 
-
-int read_frame(void)
+static int read_frame(void)
 {
     struct v4l2_buffer buf;
     unsigned int i;
 
-    switch (io)
-    {
-
-        case IO_METHOD_READ:
-            if (-1 == read(fd, buffers[0].start, buffers[0].length))
-            {
-                switch (errno)
-                {
-
-                    case EAGAIN:
-                        return 0;
-
-                    case EIO:
-                        /* Could ignore EIO, see spec. */
-
-                        /* fall through */
-
-                    default:
-                        errno_exit("read");
-                }
-            }
-
-            process_image(buffers[0].start, buffers[0].length);
-            break;
-
-        case IO_METHOD_MMAP:
             CLEAR(buf);
-
             buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
             buf.memory = V4L2_MEMORY_MMAP;
 
@@ -225,56 +220,14 @@ int read_frame(void)
             }
 
             assert(buf.index < n_buffers);
-
             process_image(buffers[buf.index].start, buf.bytesused);
-
             if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                     errno_exit("VIDIOC_QBUF");
-            break;
 
-        case IO_METHOD_USERPTR:
-            CLEAR(buf);
-
-            buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-            buf.memory = V4L2_MEMORY_USERPTR;
-
-            if (-1 == xioctl(fd, VIDIOC_DQBUF, &buf))
-            {
-                switch (errno)
-                {
-                    case EAGAIN:
-                        return 0;
-
-                    case EIO:
-                        /* Could ignore EIO, see spec. */
-
-                        /* fall through */
-
-                    default:
-                        errno_exit("VIDIOC_DQBUF");
-                }
-            }
-
-            for (i = 0; i < n_buffers; ++i)
-                    if (buf.m.userptr == (unsigned long)buffers[i].start
-                        && buf.length == buffers[i].length)
-                            break;
-
-            assert(i < n_buffers);
-
-            process_image((void *)buf.m.userptr, buf.bytesused);
-
-            if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
-                    errno_exit("VIDIOC_QBUF");
-            break;
-    }
-
-    //printf("R");
     return 1;
 }
 
-
-void mainloop(void)
+static void mainloop(void)
 {
     unsigned int count;
     struct timespec read_delay;
@@ -334,37 +287,11 @@ void mainloop(void)
     }
 }
 
-void stop_capturing(void)
-{
-        enum v4l2_buf_type type;
-
-        switch (io) {
-        case IO_METHOD_READ:
-                /* Nothing to do. */
-                break;
-
-        case IO_METHOD_MMAP:
-        case IO_METHOD_USERPTR:
-                type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-                if (-1 == xioctl(fd, VIDIOC_STREAMOFF, &type))
-                        errno_exit("VIDIOC_STREAMOFF");
-                break;
-        }
-}
-
-void start_capturing(void)
+static void start_capturing(void)
 {
         unsigned int i;
         enum v4l2_buf_type type;
 
-        switch (io) 
-        {
-
-        case IO_METHOD_READ:
-                /* Nothing to do. */
-                break;
-
-        case IO_METHOD_MMAP:
                 for (i = 0; i < n_buffers; ++i) 
                 {
                         printf("allocated buffer %d\n", i);
@@ -381,54 +308,19 @@ void start_capturing(void)
                 type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
                 if (-1 == xioctl(fd, VIDIOC_STREAMON, &type))
                         errno_exit("VIDIOC_STREAMON");
-                break;
 
-        case IO_METHOD_USERPTR:
-                for (i = 0; i < n_buffers; ++i) {
-                        struct v4l2_buffer buf;
-
-                        CLEAR(buf);
-                        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-                        buf.memory = V4L2_MEMORY_USERPTR;
-                        buf.index = i;
-                        buf.m.userptr = (unsigned long)buffers[i].start;
-                        buf.length = buffers[i].length;
-
-                        if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
-                                errno_exit("VIDIOC_QBUF");
-                }
-                type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-                if (-1 == xioctl(fd, VIDIOC_STREAMON, &type))
-                        errno_exit("VIDIOC_STREAMON");
-                break;
-        }
 }
 
-void uninit_device(void)
+static void uninit_device(void)
 {
         unsigned int i;
-
-        switch (io) {
-        case IO_METHOD_READ:
-                free(buffers[0].start);
-                break;
-
-        case IO_METHOD_MMAP:
                 for (i = 0; i < n_buffers; ++i)
                         if (-1 == munmap(buffers[i].start, buffers[i].length))
                                 errno_exit("munmap");
-                break;
-
-        case IO_METHOD_USERPTR:
-                for (i = 0; i < n_buffers; ++i)
-                        free(buffers[i].start);
-                break;
-        }
-
         free(buffers);
 }
 
-void init_read(unsigned int buffer_size)
+static void init_read(unsigned int buffer_size)
 {
         buffers = calloc(1, sizeof(*buffers));
 
@@ -448,13 +340,14 @@ void init_read(unsigned int buffer_size)
         }
 }
 
-void init_mmap(void)
+static void init_mmap(void)
 {
         struct v4l2_requestbuffers req;
 
         CLEAR(req);
 
-        req.count = 6;
+		//Set # of buffers to allocate
+        req.count = 5;
         req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         req.memory = V4L2_MEMORY_MMAP;
 
@@ -510,7 +403,7 @@ void init_mmap(void)
         }
 }
 
-void init_userp(unsigned int buffer_size)
+static void init_userp(unsigned int buffer_size)
 {
         struct v4l2_requestbuffers req;
 
@@ -537,7 +430,7 @@ void init_userp(unsigned int buffer_size)
                 exit(EXIT_FAILURE);
         }
 
-        for (n_buffers = 0; n_buffers < 4; ++n_buffers) {
+        for (n_buffers = 0; n_buffers < 5; n_buffers++) {
                 buffers[n_buffers].length = buffer_size;
                 buffers[n_buffers].start = malloc(buffer_size);
 
@@ -548,7 +441,7 @@ void init_userp(unsigned int buffer_size)
         }
 }
 
-void init_device(void)
+static void init_device(void)
 {
     struct v4l2_capability cap;
     struct v4l2_cropcap cropcap;
@@ -575,36 +468,9 @@ void init_device(void)
         exit(EXIT_FAILURE);
     }
 
-    switch (io)
-    {
-        case IO_METHOD_READ:
-            if (!(cap.capabilities & V4L2_CAP_READWRITE))
-            {
-                fprintf(stderr, "%s does not support read i/o\n",
-                         dev_name);
-                exit(EXIT_FAILURE);
-            }
-            break;
-
-        case IO_METHOD_MMAP:
-        case IO_METHOD_USERPTR:
-            if (!(cap.capabilities & V4L2_CAP_STREAMING))
-            {
-                fprintf(stderr, "%s does not support streaming i/o\n",
-                         dev_name);
-                exit(EXIT_FAILURE);
-            }
-            break;
-    }
-
-
     /* Select video input, video standard and tune here. */
-
-
     CLEAR(cropcap);
-
     cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-
     if (0 == xioctl(fd, VIDIOC_CROPCAP, &cropcap))
     {
         crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -629,29 +495,16 @@ void init_device(void)
         /* Errors ignored. */
     }
 
-
     CLEAR(fmt);
-
     fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-
     if (force_format)
     {
+        printf("FORCING FORMAT\n");
         fmt.fmt.pix.width       = HRES;
         fmt.fmt.pix.height      = VRES;
-		printf("FORCING FORMAT to %d x %d\n", HRES, VRES);
-        // Specify the Pixel Coding Formate here
 
         // This one work for Logitech C200
         fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-
-        //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
-        //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_VYUY;
-
-        // Would be nice if camera supported
-        //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_GREY;
-        //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
-
-        //fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
         fmt.fmt.pix.field       = V4L2_FIELD_NONE;
 
         if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
@@ -674,24 +527,10 @@ void init_device(void)
     min = fmt.fmt.pix.bytesperline * fmt.fmt.pix.height;
     if (fmt.fmt.pix.sizeimage < min)
             fmt.fmt.pix.sizeimage = min;
-
-    switch (io)
-    {
-        case IO_METHOD_READ:
-            init_read(fmt.fmt.pix.sizeimage);
-            break;
-
-        case IO_METHOD_MMAP:
-            init_mmap();
-            break;
-
-        case IO_METHOD_USERPTR:
-            init_userp(fmt.fmt.pix.sizeimage);
-            break;
-    }
+	init_mmap();
 }
 
-void close_device(void)
+static void close_device(void)
 {
         if (-1 == close(fd))
                 errno_exit("close");
@@ -699,7 +538,7 @@ void close_device(void)
         fd = -1;
 }
 
-void open_device(void)
+static void open_device(void)
 {
         struct stat st;
 
@@ -723,7 +562,7 @@ void open_device(void)
         }
 }
 
-void usage(FILE *fp, int argc, char **argv)
+static void usage(FILE *fp, int argc, char **argv)
 {
         fprintf(fp,
                  "Usage: %s [options]\n\n"
@@ -740,79 +579,43 @@ void usage(FILE *fp, int argc, char **argv)
                  "",
                  argv[0], dev_name, frame_count);
 }
-/*
+
+static const char short_options[] = "d:hmruofc:";
+
+static const struct option
+long_options[] = {
+        { "device", required_argument, NULL, 'd' },
+        { "help",   no_argument,       NULL, 'h' },
+        { "mmap",   no_argument,       NULL, 'm' },
+        { "read",   no_argument,       NULL, 'r' },
+        { "userp",  no_argument,       NULL, 'u' },
+        { "output", no_argument,       NULL, 'o' },
+        { "format", no_argument,       NULL, 'f' },
+        { "count",  required_argument, NULL, 'c' },
+        { 0, 0, 0, 0 }
+};
+
 int main(int argc, char **argv)
 {
-    if(argc > 1)
-        dev_name = argv[1];
-    else
         dev_name = "/dev/video0";
-
     for (;;)
     {
         int idx;
         int c;
-
         c = getopt_long(argc, argv,
                     short_options, long_options, &idx);
-
         if (-1 == c)
             break;
-
-        switch (c)
-        {
-            case 0: 
-                break;
-
-            case 'd':
-                dev_name = optarg;
-                break;
-
-            case 'h':
-                usage(stdout, argc, argv);
-                exit(EXIT_SUCCESS);
-
-            case 'm':
-                io = IO_METHOD_MMAP;
-                break;
-
-            case 'r':
-                io = IO_METHOD_READ;
-                break;
-
-            case 'u':
-                io = IO_METHOD_USERPTR;
-                break;
-
-            case 'o':
-                out_buf++;
-                break;
-
-            case 'f':
-                force_format++;
-                break;
-
-            case 'c':
-                errno = 0;
-                frame_count = strtol(optarg, NULL, 0);
-                if (errno)
-                        errno_exit(optarg);
-                break;
-
-            default:
-                usage(stderr, argc, argv);
-                exit(EXIT_FAILURE);
-        }
+        usage(stderr, argc, argv);
+        exit(EXIT_FAILURE);
     }
 
     open_device();
     init_device();
     start_capturing();
     mainloop();
-    stop_capturing();
     uninit_device();
     close_device();
     fprintf(stderr, "\n");
     return 0;
 }
-*/

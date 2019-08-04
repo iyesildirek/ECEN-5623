@@ -1,13 +1,29 @@
+INCLUDE_DIRS = 
+LIB_DIRS = 
 CC=gcc
-CFLAGS= 
-#-O3 
-#-Wall -Werror
 
-pthread: capture.o pthread.o  
-	$(CC) capture.o pthread.o -o pthread -lpthread  
-	$(CC) $(CFLAGS) capture.c pthread.c 
-#capture.o: capture.c main.h
-#	$(CC) $(CFLAGS) capture.c 
+CDEFS= 
+CFLAGS= -O3 -g $(INCLUDE_DIRS) $(CDEFS)
+LIBS= -lpthread -lrt
+
+PRODUCT=pthread
+
+HFILES=
+CFILES= pthread.c
+
+SRCS= ${HFILES} ${CFILES}
+OBJS= ${CFILES:.c=.o}
+
+all:	${PRODUCT}
 
 clean:
-	rm -rf *o pthread outputFile.txt
+	-rm -f *.o *.pgm *~ *.d
+	-rm -f ${PRODUCT} ${GARBAGE} outputFile.txt
+
+pthread:	pthread.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ pthread.o $(LIBS)
+
+depend:
+
+.c.o:
+	$(CC) -MD $(CFLAGS) -c $<
