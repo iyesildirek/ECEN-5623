@@ -1,0 +1,516 @@
+Aug  7 18:46:48 raspberrypi seqgen2: Sequencer @ sec=0, msec=750
+Aug  7 18:46:48 raspberrypi seqgen2: 10HZ W1 thread @ sec=0, msec=751
+Aug  7 18:46:48 raspberrypi seqgen2: 1HZ W2 thread @ sec=0, msec=752
+Aug  7 18:46:48 raspberrypi seqgen2: Sequencer thread start @ sec=0, msec=752
+Aug  7 18:46:48 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=0, msec=752
+Aug  7 18:46:48 raspberrypi seqgen2: Sequencer cycle 1 @ sec=0, msec=802
+Aug  7 18:46:48 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=0, msec=802
+Aug  7 18:46:48 raspberrypi seqgen2: Sequencer cycle 2 @ sec=0, msec=852
+Aug  7 18:46:48 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=0, msec=852
+Aug  7 18:46:48 raspberrypi seqgen2: 10HZ W1 thread release 1 @ sec=0, msec=852
+Aug  7 18:46:48 raspberrypi seqgen2: Sequencer cycle 3 @ sec=0, msec=903
+Aug  7 18:46:48 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=0, msec=903
+Aug  7 18:46:48 raspberrypi seqgen2: Sequencer cycle 4 @ sec=0, msec=953
+Aug  7 18:46:48 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=0, msec=953
+Aug  7 18:46:48 raspberrypi seqgen2: 10HZ W1 thread release 2 @ sec=0, msec=953
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 5 @ sec=1, msec=3
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=3
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 6 @ sec=1, msec=53
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=53
+Aug  7 18:46:49 raspberrypi seqgen2: 10HZ W1 thread release 3 @ sec=1, msec=53
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 7 @ sec=1, msec=103
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=103
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 8 @ sec=1, msec=153
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=153
+Aug  7 18:46:49 raspberrypi seqgen2: 10HZ W1 thread release 4 @ sec=1, msec=153
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 9 @ sec=1, msec=203
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=203
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 10 @ sec=1, msec=253
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=253
+Aug  7 18:46:49 raspberrypi seqgen2: 10HZ W1 thread release 5 @ sec=1, msec=253
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 11 @ sec=1, msec=303
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=303
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 12 @ sec=1, msec=353
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=353
+Aug  7 18:46:49 raspberrypi seqgen2: 10HZ W1 thread release 6 @ sec=1, msec=353
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 13 @ sec=1, msec=403
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=403
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 14 @ sec=1, msec=454
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=454
+Aug  7 18:46:49 raspberrypi seqgen2: 10HZ W1 thread release 7 @ sec=1, msec=454
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 15 @ sec=1, msec=504
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=504
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 16 @ sec=1, msec=554
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=554
+Aug  7 18:46:49 raspberrypi seqgen2: 10HZ W1 thread release 8 @ sec=1, msec=554
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 17 @ sec=1, msec=604
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=604
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 18 @ sec=1, msec=654
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=654
+Aug  7 18:46:49 raspberrypi seqgen2: 10HZ W1 thread release 9 @ sec=1, msec=654
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 19 @ sec=1, msec=704
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=704
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 20 @ sec=1, msec=754
+Aug  7 18:46:49 raspberrypi seqgen2: 10HZ W1 thread release 10 @ sec=1, msec=755
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=754
+Aug  7 18:46:49 raspberrypi seqgen2: 1HZ W2 release 1 @ sec=1, msec=755
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 21 @ sec=1, msec=805
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=805
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 22 @ sec=1, msec=855
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=855
+Aug  7 18:46:49 raspberrypi seqgen2: 10HZ W1 thread release 11 @ sec=1, msec=855
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 23 @ sec=1, msec=905
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=905
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer cycle 24 @ sec=1, msec=955
+Aug  7 18:46:49 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=1, msec=955
+Aug  7 18:46:49 raspberrypi seqgen2: 10HZ W1 thread release 12 @ sec=1, msec=955
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 25 @ sec=2, msec=5
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=5
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 26 @ sec=2, msec=56
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=56
+Aug  7 18:46:50 raspberrypi seqgen2: 10HZ W1 thread release 13 @ sec=2, msec=56
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 27 @ sec=2, msec=106
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=106
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 28 @ sec=2, msec=156
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=156
+Aug  7 18:46:50 raspberrypi seqgen2: 10HZ W1 thread release 14 @ sec=2, msec=156
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 29 @ sec=2, msec=206
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=206
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 30 @ sec=2, msec=256
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=256
+Aug  7 18:46:50 raspberrypi seqgen2: 10HZ W1 thread release 15 @ sec=2, msec=256
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 31 @ sec=2, msec=306
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=306
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 32 @ sec=2, msec=357
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=357
+Aug  7 18:46:50 raspberrypi seqgen2: 10HZ W1 thread release 16 @ sec=2, msec=357
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 33 @ sec=2, msec=407
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=407
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 34 @ sec=2, msec=457
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=457
+Aug  7 18:46:50 raspberrypi seqgen2: 10HZ W1 thread release 17 @ sec=2, msec=457
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 35 @ sec=2, msec=507
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=507
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 36 @ sec=2, msec=557
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=557
+Aug  7 18:46:50 raspberrypi seqgen2: 10HZ W1 thread release 18 @ sec=2, msec=557
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 37 @ sec=2, msec=607
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=607
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 38 @ sec=2, msec=658
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=658
+Aug  7 18:46:50 raspberrypi seqgen2: 10HZ W1 thread release 19 @ sec=2, msec=658
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 39 @ sec=2, msec=708
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=708
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 40 @ sec=2, msec=758
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=758
+Aug  7 18:46:50 raspberrypi seqgen2: 10HZ W1 thread release 20 @ sec=2, msec=758
+Aug  7 18:46:50 raspberrypi seqgen2: 1HZ W2 release 2 @ sec=2, msec=758
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 41 @ sec=2, msec=808
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=808
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 42 @ sec=2, msec=858
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=858
+Aug  7 18:46:50 raspberrypi seqgen2: 10HZ W1 thread release 21 @ sec=2, msec=858
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 43 @ sec=2, msec=909
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=909
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer cycle 44 @ sec=2, msec=959
+Aug  7 18:46:50 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=2, msec=959
+Aug  7 18:46:50 raspberrypi seqgen2: 10HZ W1 thread release 22 @ sec=2, msec=959
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 45 @ sec=3, msec=9
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=9
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 46 @ sec=3, msec=59
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=59
+Aug  7 18:46:51 raspberrypi seqgen2: 10HZ W1 thread release 23 @ sec=3, msec=59
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 47 @ sec=3, msec=109
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=109
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 48 @ sec=3, msec=159
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=159
+Aug  7 18:46:51 raspberrypi seqgen2: 10HZ W1 thread release 24 @ sec=3, msec=159
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 49 @ sec=3, msec=209
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=209
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 50 @ sec=3, msec=260
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=260
+Aug  7 18:46:51 raspberrypi seqgen2: 10HZ W1 thread release 25 @ sec=3, msec=260
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 51 @ sec=3, msec=310
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=310
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 52 @ sec=3, msec=360
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=360
+Aug  7 18:46:51 raspberrypi seqgen2: 10HZ W1 thread release 26 @ sec=3, msec=360
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 53 @ sec=3, msec=410
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=410
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 54 @ sec=3, msec=460
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=460
+Aug  7 18:46:51 raspberrypi seqgen2: 10HZ W1 thread release 27 @ sec=3, msec=460
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 55 @ sec=3, msec=511
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=511
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 56 @ sec=3, msec=561
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=561
+Aug  7 18:46:51 raspberrypi seqgen2: 10HZ W1 thread release 28 @ sec=3, msec=561
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 57 @ sec=3, msec=611
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=611
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 58 @ sec=3, msec=661
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=661
+Aug  7 18:46:51 raspberrypi seqgen2: 10HZ W1 thread release 29 @ sec=3, msec=661
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 59 @ sec=3, msec=711
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=711
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 60 @ sec=3, msec=761
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=761
+Aug  7 18:46:51 raspberrypi seqgen2: 10HZ W1 thread release 30 @ sec=3, msec=761
+Aug  7 18:46:51 raspberrypi seqgen2: 1HZ W2 release 3 @ sec=3, msec=761
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 61 @ sec=3, msec=812
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=812
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 62 @ sec=3, msec=862
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=862
+Aug  7 18:46:51 raspberrypi seqgen2: 10HZ W1 thread release 31 @ sec=3, msec=862
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 63 @ sec=3, msec=912
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=912
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer cycle 64 @ sec=3, msec=962
+Aug  7 18:46:51 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=3, msec=962
+Aug  7 18:46:51 raspberrypi seqgen2: 10HZ W1 thread release 32 @ sec=3, msec=962
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 65 @ sec=4, msec=12
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=12
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 66 @ sec=4, msec=62
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=62
+Aug  7 18:46:52 raspberrypi seqgen2: 10HZ W1 thread release 33 @ sec=4, msec=62
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 67 @ sec=4, msec=113
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=113
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 68 @ sec=4, msec=163
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=163
+Aug  7 18:46:52 raspberrypi seqgen2: 10HZ W1 thread release 34 @ sec=4, msec=163
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 69 @ sec=4, msec=213
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=213
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 70 @ sec=4, msec=263
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=263
+Aug  7 18:46:52 raspberrypi seqgen2: 10HZ W1 thread release 35 @ sec=4, msec=263
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 71 @ sec=4, msec=313
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=313
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 72 @ sec=4, msec=363
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=363
+Aug  7 18:46:52 raspberrypi seqgen2: 10HZ W1 thread release 36 @ sec=4, msec=363
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 73 @ sec=4, msec=414
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=414
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 74 @ sec=4, msec=464
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=464
+Aug  7 18:46:52 raspberrypi seqgen2: 10HZ W1 thread release 37 @ sec=4, msec=464
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 75 @ sec=4, msec=514
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=514
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 76 @ sec=4, msec=564
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=564
+Aug  7 18:46:52 raspberrypi seqgen2: 10HZ W1 thread release 38 @ sec=4, msec=564
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 77 @ sec=4, msec=614
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=614
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 78 @ sec=4, msec=664
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=664
+Aug  7 18:46:52 raspberrypi seqgen2: 10HZ W1 thread release 39 @ sec=4, msec=665
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 79 @ sec=4, msec=715
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=715
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 80 @ sec=4, msec=765
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=765
+Aug  7 18:46:52 raspberrypi seqgen2: 10HZ W1 thread release 40 @ sec=4, msec=765
+Aug  7 18:46:52 raspberrypi seqgen2: 1HZ W2 release 4 @ sec=4, msec=765
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 81 @ sec=4, msec=815
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=815
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 82 @ sec=4, msec=865
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=865
+Aug  7 18:46:52 raspberrypi seqgen2: 10HZ W1 thread release 41 @ sec=4, msec=865
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 83 @ sec=4, msec=915
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=915
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer cycle 84 @ sec=4, msec=965
+Aug  7 18:46:52 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=4, msec=965
+Aug  7 18:46:52 raspberrypi seqgen2: 10HZ W1 thread release 42 @ sec=4, msec=966
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 85 @ sec=5, msec=16
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=16
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 86 @ sec=5, msec=66
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=66
+Aug  7 18:46:53 raspberrypi seqgen2: 10HZ W1 thread release 43 @ sec=5, msec=66
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 87 @ sec=5, msec=116
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=116
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 88 @ sec=5, msec=166
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=166
+Aug  7 18:46:53 raspberrypi seqgen2: 10HZ W1 thread release 44 @ sec=5, msec=166
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 89 @ sec=5, msec=216
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=216
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 90 @ sec=5, msec=266
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=266
+Aug  7 18:46:53 raspberrypi seqgen2: 10HZ W1 thread release 45 @ sec=5, msec=267
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 91 @ sec=5, msec=317
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=317
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 92 @ sec=5, msec=367
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=367
+Aug  7 18:46:53 raspberrypi seqgen2: 10HZ W1 thread release 46 @ sec=5, msec=367
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 93 @ sec=5, msec=417
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=417
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 94 @ sec=5, msec=467
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=467
+Aug  7 18:46:53 raspberrypi seqgen2: 10HZ W1 thread release 47 @ sec=5, msec=467
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 95 @ sec=5, msec=517
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=517
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 96 @ sec=5, msec=567
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=567
+Aug  7 18:46:53 raspberrypi seqgen2: 10HZ W1 thread release 48 @ sec=5, msec=568
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 97 @ sec=5, msec=618
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=618
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 98 @ sec=5, msec=668
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=668
+Aug  7 18:46:53 raspberrypi seqgen2: 10HZ W1 thread release 49 @ sec=5, msec=668
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 99 @ sec=5, msec=718
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=718
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 100 @ sec=5, msec=768
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=768
+Aug  7 18:46:53 raspberrypi seqgen2: 10HZ W1 thread release 50 @ sec=5, msec=768
+Aug  7 18:46:53 raspberrypi seqgen2: 1HZ W2 release 5 @ sec=5, msec=768
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 101 @ sec=5, msec=818
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=818
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 102 @ sec=5, msec=869
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=869
+Aug  7 18:46:53 raspberrypi seqgen2: 10HZ W1 thread release 51 @ sec=5, msec=869
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 103 @ sec=5, msec=919
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=919
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer cycle 104 @ sec=5, msec=969
+Aug  7 18:46:53 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=5, msec=969
+Aug  7 18:46:53 raspberrypi seqgen2: 10HZ W1 thread release 52 @ sec=5, msec=969
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 105 @ sec=6, msec=19
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=19
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 106 @ sec=6, msec=69
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=69
+Aug  7 18:46:54 raspberrypi seqgen2: 10HZ W1 thread release 53 @ sec=6, msec=70
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 107 @ sec=6, msec=120
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=120
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 108 @ sec=6, msec=170
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=170
+Aug  7 18:46:54 raspberrypi seqgen2: 10HZ W1 thread release 54 @ sec=6, msec=170
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 109 @ sec=6, msec=220
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=220
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 110 @ sec=6, msec=270
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=270
+Aug  7 18:46:54 raspberrypi seqgen2: 10HZ W1 thread release 55 @ sec=6, msec=270
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 111 @ sec=6, msec=320
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=320
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 112 @ sec=6, msec=370
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=370
+Aug  7 18:46:54 raspberrypi seqgen2: 10HZ W1 thread release 56 @ sec=6, msec=371
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 113 @ sec=6, msec=421
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=421
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 114 @ sec=6, msec=471
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=471
+Aug  7 18:46:54 raspberrypi seqgen2: 10HZ W1 thread release 57 @ sec=6, msec=471
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 115 @ sec=6, msec=521
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=521
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 116 @ sec=6, msec=571
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=571
+Aug  7 18:46:54 raspberrypi seqgen2: 10HZ W1 thread release 58 @ sec=6, msec=571
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 117 @ sec=6, msec=621
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=621
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 118 @ sec=6, msec=672
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=672
+Aug  7 18:46:54 raspberrypi seqgen2: 10HZ W1 thread release 59 @ sec=6, msec=672
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 119 @ sec=6, msec=722
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=722
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 120 @ sec=6, msec=772
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=772
+Aug  7 18:46:54 raspberrypi seqgen2: 10HZ W1 thread release 60 @ sec=6, msec=772
+Aug  7 18:46:54 raspberrypi seqgen2: 1HZ W2 release 6 @ sec=6, msec=772
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 121 @ sec=6, msec=822
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=822
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 122 @ sec=6, msec=872
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=872
+Aug  7 18:46:54 raspberrypi seqgen2: 10HZ W1 thread release 61 @ sec=6, msec=872
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 123 @ sec=6, msec=923
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=923
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer cycle 124 @ sec=6, msec=973
+Aug  7 18:46:54 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=6, msec=973
+Aug  7 18:46:54 raspberrypi seqgen2: 10HZ W1 thread release 62 @ sec=6, msec=973
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 125 @ sec=7, msec=23
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=23
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 126 @ sec=7, msec=73
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=73
+Aug  7 18:46:55 raspberrypi seqgen2: 10HZ W1 thread release 63 @ sec=7, msec=73
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 127 @ sec=7, msec=123
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=123
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 128 @ sec=7, msec=173
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=173
+Aug  7 18:46:55 raspberrypi seqgen2: 10HZ W1 thread release 64 @ sec=7, msec=174
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 129 @ sec=7, msec=224
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=224
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 130 @ sec=7, msec=274
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=274
+Aug  7 18:46:55 raspberrypi seqgen2: 10HZ W1 thread release 65 @ sec=7, msec=274
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 131 @ sec=7, msec=324
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=324
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 132 @ sec=7, msec=374
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=374
+Aug  7 18:46:55 raspberrypi seqgen2: 10HZ W1 thread release 66 @ sec=7, msec=374
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 133 @ sec=7, msec=424
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=424
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 134 @ sec=7, msec=474
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=474
+Aug  7 18:46:55 raspberrypi seqgen2: 10HZ W1 thread release 67 @ sec=7, msec=475
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 135 @ sec=7, msec=525
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=525
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 136 @ sec=7, msec=575
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=575
+Aug  7 18:46:55 raspberrypi seqgen2: 10HZ W1 thread release 68 @ sec=7, msec=575
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 137 @ sec=7, msec=625
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=625
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 138 @ sec=7, msec=675
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=675
+Aug  7 18:46:55 raspberrypi seqgen2: 10HZ W1 thread release 69 @ sec=7, msec=675
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 139 @ sec=7, msec=725
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=725
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 140 @ sec=7, msec=775
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=775
+Aug  7 18:46:55 raspberrypi seqgen2: 10HZ W1 thread release 70 @ sec=7, msec=776
+Aug  7 18:46:55 raspberrypi seqgen2: 1HZ W2 release 7 @ sec=7, msec=776
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 141 @ sec=7, msec=826
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=826
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 142 @ sec=7, msec=876
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=876
+Aug  7 18:46:55 raspberrypi seqgen2: 10HZ W1 thread release 71 @ sec=7, msec=876
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 143 @ sec=7, msec=926
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=926
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer cycle 144 @ sec=7, msec=976
+Aug  7 18:46:55 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=7, msec=976
+Aug  7 18:46:55 raspberrypi seqgen2: 10HZ W1 thread release 72 @ sec=7, msec=976
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 145 @ sec=8, msec=26
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=26
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 146 @ sec=8, msec=76
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=76
+Aug  7 18:46:56 raspberrypi seqgen2: 10HZ W1 thread release 73 @ sec=8, msec=77
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 147 @ sec=8, msec=127
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=127
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 148 @ sec=8, msec=177
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=177
+Aug  7 18:46:56 raspberrypi seqgen2: 10HZ W1 thread release 74 @ sec=8, msec=177
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 149 @ sec=8, msec=227
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=227
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 150 @ sec=8, msec=277
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=277
+Aug  7 18:46:56 raspberrypi seqgen2: 10HZ W1 thread release 75 @ sec=8, msec=277
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 151 @ sec=8, msec=327
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=327
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 152 @ sec=8, msec=377
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=377
+Aug  7 18:46:56 raspberrypi seqgen2: 10HZ W1 thread release 76 @ sec=8, msec=378
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 153 @ sec=8, msec=428
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=428
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 154 @ sec=8, msec=478
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=478
+Aug  7 18:46:56 raspberrypi seqgen2: 10HZ W1 thread release 77 @ sec=8, msec=478
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 155 @ sec=8, msec=528
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=528
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 156 @ sec=8, msec=578
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=578
+Aug  7 18:46:56 raspberrypi seqgen2: 10HZ W1 thread release 78 @ sec=8, msec=578
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 157 @ sec=8, msec=628
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=628
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 158 @ sec=8, msec=678
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=678
+Aug  7 18:46:56 raspberrypi seqgen2: 10HZ W1 thread release 79 @ sec=8, msec=679
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 159 @ sec=8, msec=729
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=729
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 160 @ sec=8, msec=779
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=779
+Aug  7 18:46:56 raspberrypi seqgen2: 10HZ W1 thread release 80 @ sec=8, msec=779
+Aug  7 18:46:56 raspberrypi seqgen2: 1HZ W2 release 8 @ sec=8, msec=779
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 161 @ sec=8, msec=829
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=829
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 162 @ sec=8, msec=879
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=879
+Aug  7 18:46:56 raspberrypi seqgen2: 10HZ W1 thread release 81 @ sec=8, msec=879
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 163 @ sec=8, msec=929
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=929
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer cycle 164 @ sec=8, msec=980
+Aug  7 18:46:56 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=8, msec=980
+Aug  7 18:46:56 raspberrypi seqgen2: 10HZ W1 thread release 82 @ sec=8, msec=980
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 165 @ sec=9, msec=30
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=30
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 166 @ sec=9, msec=80
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=80
+Aug  7 18:46:57 raspberrypi seqgen2: 10HZ W1 thread release 83 @ sec=9, msec=80
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 167 @ sec=9, msec=130
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=130
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 168 @ sec=9, msec=180
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=180
+Aug  7 18:46:57 raspberrypi seqgen2: 10HZ W1 thread release 84 @ sec=9, msec=180
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 169 @ sec=9, msec=230
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=230
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 170 @ sec=9, msec=281
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=281
+Aug  7 18:46:57 raspberrypi seqgen2: 10HZ W1 thread release 85 @ sec=9, msec=281
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 171 @ sec=9, msec=331
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=331
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 172 @ sec=9, msec=381
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=381
+Aug  7 18:46:57 raspberrypi seqgen2: 10HZ W1 thread release 86 @ sec=9, msec=381
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 173 @ sec=9, msec=431
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=431
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 174 @ sec=9, msec=481
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=481
+Aug  7 18:46:57 raspberrypi seqgen2: 10HZ W1 thread release 87 @ sec=9, msec=481
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 175 @ sec=9, msec=531
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=531
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 176 @ sec=9, msec=582
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=582
+Aug  7 18:46:57 raspberrypi seqgen2: 10HZ W1 thread release 88 @ sec=9, msec=582
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 177 @ sec=9, msec=632
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=632
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 178 @ sec=9, msec=682
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=682
+Aug  7 18:46:57 raspberrypi seqgen2: 10HZ W1 thread release 89 @ sec=9, msec=682
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 179 @ sec=9, msec=732
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=732
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 180 @ sec=9, msec=782
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=782
+Aug  7 18:46:57 raspberrypi seqgen2: 10HZ W1 thread release 90 @ sec=9, msec=782
+Aug  7 18:46:57 raspberrypi seqgen2: 1HZ W2 release 9 @ sec=9, msec=782
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 181 @ sec=9, msec=832
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=832
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 182 @ sec=9, msec=883
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=883
+Aug  7 18:46:57 raspberrypi seqgen2: 10HZ W1 thread release 91 @ sec=9, msec=883
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 183 @ sec=9, msec=933
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=933
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer cycle 184 @ sec=9, msec=983
+Aug  7 18:46:57 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=9, msec=983
+Aug  7 18:46:57 raspberrypi seqgen2: 10HZ W1 thread release 92 @ sec=9, msec=983
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 185 @ sec=10, msec=33
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=33
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 186 @ sec=10, msec=83
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=83
+Aug  7 18:46:58 raspberrypi seqgen2: 10HZ W1 thread release 93 @ sec=10, msec=83
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 187 @ sec=10, msec=133
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=133
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 188 @ sec=10, msec=184
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=184
+Aug  7 18:46:58 raspberrypi seqgen2: 10HZ W1 thread release 94 @ sec=10, msec=184
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 189 @ sec=10, msec=234
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=234
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 190 @ sec=10, msec=284
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=284
+Aug  7 18:46:58 raspberrypi seqgen2: 10HZ W1 thread release 95 @ sec=10, msec=284
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 191 @ sec=10, msec=334
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=334
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 192 @ sec=10, msec=384
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=384
+Aug  7 18:46:58 raspberrypi seqgen2: 10HZ W1 thread release 96 @ sec=10, msec=384
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 193 @ sec=10, msec=435
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=435
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 194 @ sec=10, msec=485
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=485
+Aug  7 18:46:58 raspberrypi seqgen2: 10HZ W1 thread release 97 @ sec=10, msec=485
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 195 @ sec=10, msec=535
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=535
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 196 @ sec=10, msec=585
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=585
+Aug  7 18:46:58 raspberrypi seqgen2: 10HZ W1 thread release 98 @ sec=10, msec=585
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 197 @ sec=10, msec=635
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=635
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 198 @ sec=10, msec=685
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=685
+Aug  7 18:46:58 raspberrypi seqgen2: 10HZ W1 thread release 99 @ sec=10, msec=686
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 199 @ sec=10, msec=736
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread prior to delay @ sec=10, msec=736
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer cycle 200 @ sec=10, msec=786
+Aug  7 18:46:58 raspberrypi seqgen2: Sequencer thread end @ sec=10, msec=786
+Aug  7 18:46:58 raspberrypi seqgen2: 10HZ W1 thread release 100 @ sec=10, msec=786
+Aug  7 18:46:58 raspberrypi seqgen2: 1HZ W2 release 10 @ sec=10, msec=786
+Aug  7 18:46:58 raspberrypi seqgen2: Last number queued to W1 =200
