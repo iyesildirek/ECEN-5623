@@ -26,17 +26,17 @@
 
 #define SNDRCV_MQ "/send_receive_mq"
 #define MAX_MSG_SIZE 128
+
 #define ERROR (-1)
 
 struct mq_attr mq_attr;
 
-void receiver(void)
+int receiver(void)
 {
   mqd_t mymq;
   char buffer[MAX_MSG_SIZE];
   int prio;
   int nbytes;
-
   mymq = mq_open(SNDRCV_MQ, O_CREAT|O_RDWR, S_IRWXU, &mq_attr);
 
   if(mymq == (mqd_t)ERROR)
@@ -55,18 +55,19 @@ void receiver(void)
     buffer[nbytes] = '\0';
     printf("receive: msg %s received with priority = %d, length = %d\n",
            buffer, prio, nbytes);
+	return(atoi(buffer));
   }
     
 }
 
-static char canned_msg[] = "this is a test, and only a test, in the event of a real emergency, you would be instructed ...";
+static char canned_msg[] = "2";
 
-void sender(void)
+void sender(int out, int in)
 {
   mqd_t mymq;
   int prio;
   int nbytes;
-
+  
   mymq = mq_open(SNDRCV_MQ, O_CREAT|O_RDWR, S_IRWXU, &mq_attr);
 
   if(mymq < 0)
@@ -78,7 +79,8 @@ void sender(void)
   {
     printf("sender opened mq\n");
   }
-
+	sprintf(canned_msg, "%d", in);
+	
   /* send message with priority=30 */
   if((nbytes = mq_send(mymq, canned_msg, sizeof(canned_msg), 30)) == ERROR)
   {
@@ -88,22 +90,19 @@ void sender(void)
   {
     printf("send: message successfully sent\n");
   }
-  
 }
 
 
 void main(void)
 {
-
   /* setup common message q attributes */
-  mq_attr.mq_maxmsg = 10;
+  mq_attr.mq_maxmsg = 128;
   mq_attr.mq_msgsize = MAX_MSG_SIZE;
-
   mq_attr.mq_flags = 0;
-
-
+	int tx = 20;
+	int rx = 0;
   // Create two communicating processes right here
-  sender();
-  receiver();
-   
+  sender(rx,tx);
+  rx = receiver();
+  printf("Received: %d\n",rx);
 }

@@ -21,11 +21,11 @@ all:	seqgen2 posix_mq
 
 clean:
 	-rm -f *.o *.d
-	-rm -f perfmon seqgen posix_mq
+	-rm -f perfmon seqgen2 posix_mq
 
 distclean:
 	-rm -f *.o *.d
-	-rm -f seqgen posix_mq
+	-rm -f seqgen2 posix_mq
 
 seqgen2: seqgen2.o
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread -Wall

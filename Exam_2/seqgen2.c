@@ -1,22 +1,22 @@
+/**************************************************************************
+* The code is repeatable in terms of function because I am using semaphore 
+* and the sequencer to synchronize my threads and they are working as 
+* expected and in performing function in the right sequence.
+* In terms of timing, I'm getting a 37msec drift so it is not repeatable.
+* This is because Linux is not ideal for hard real time systems because
+* it is not fully preemptable, therefore causing a drift or delay in 
+* code execution.
+**************************************************************************/
+
+/**************************************************************************
+* The code is based on the following code provided in ECEN5623:
+* - seqgen.c
+* - posix_mq.c
+*************************************************************************/
+
 // Sam Siewert, December 2017
 //
 // Sequencer Generic
-//
-// The purpose of this code is to provide an example for how to best
-// sequence a set of periodic services for problems similar to and including
-// the final project in real-time systems.
-//
-// For example: Service_1 for camera frame aquisition
-//              Service_2 for image analysis and timestamping
-//
-// At least two of the services need to be real-time and need to run on a single
-// core or run without affinity on the SMP cores available to the Linux 
-// scheduler as a group.  All services can be real-time, but you could choose
-// to make just the first 2 real-time and the others best effort.
-//
-// For the standard project, to time-stamp images at the 1 Hz rate with unique
-// clock images (unique second hand / seconds) per image, you might use the 
-// following rates for each service:
 //
 // Sequencer - 20 Hz 
 //                   [gives semaphores to all other services]
@@ -31,62 +31,52 @@
 // Servcie_1 = RT_MAX-1	@ 10 Hz
 // Service_2 = RT_MAX-2	@ 1 Hz
 //
-// Here are a few hardware/platform configuration settings on your Jetson
-// that you should also check before running this code:
-//
-// 1) Check to ensure all your CPU cores on in an online state.
-//
-// 2) Check /sys/devices/system/cpu or do lscpu.
-//
-//    Tegra is normally configured to hot-plug CPU cores, so to make all
-//    available, as root do:
-//
-//    echo 0 > /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/enable
-//    echo 1 > /sys/devices/system/cpu/cpu1/online
-//    echo 1 > /sys/devices/system/cpu/cpu2/online
-//    echo 1 > /sys/devices/system/cpu/cpu3/online
-//
-// 3) Check for precision time resolution and support with cat /proc/timer_list
-//
-// 4) Ideally all printf calls should be eliminated as they can interfere with
-//    timing.  They should be replaced with an in-memory event logger or at
-//    least calls to syslog.
-//
-// 5) For simplicity, you can just allow Linux to dynamically load balance
-//    threads to CPU cores (not set affinity) and as long as you have more
-//    threads than you have cores, this is still an over-subscribed system
-//    where RM policy is required over the set of cores.
-
 // This is necessary for CPU affinity macros in Linux
+
+/*
+* Compile code by using the gcc command below:
+* $ gcc seqgen2.c -o a.out -lpthread -Wall -lpthread -lrt
+* Run by:
+* $ sudo ./a.out
+* Trace by: 
+* $ grep a.out /var/log/syslog > outputfile.txt
+*/
+
 #define _GNU_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 #include <pthread.h>
 #include <sched.h>
 #include <time.h>
 #include <semaphore.h>
-
 #include <syslog.h>
 #include <sys/time.h>
-
 #include <errno.h>
+#include <string.h>
+#include <mqueue.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define USEC_PER_MSEC (1000)
 #define NANOSEC_PER_SEC (1000000000)
 #define NUM_CPU_CORES (1)
 #define TRUE (1)
 #define FALSE (0)
-
+#define ERROR (-1)
 #define NUM_THREADS (2+1)
+
+#define SNDRCV_MQ "/send_receive_mq"
+#define MAX_MSG_SIZE 128
 
 int abortTest=FALSE;
 int abortS1=FALSE, abortS2=FALSE, abortS3=FALSE;
 sem_t semS1, semS2, semS3;
 struct timeval start_time_val;
-
+struct mq_attr mq_attr;
+static char canned_msg[] = "2";
 typedef struct
 {
     int threadIdx;
@@ -99,6 +89,8 @@ void *Service_1(void *threadp);
 void *Service_2(void *threadp);
 double getTimeMsec(void);
 void print_scheduler(void);
+int receiver(void);
+void sender(int out, int in);
 
 
 void main(void)
@@ -365,6 +357,65 @@ double getTimeMsec(void)
 
   clock_gettime(CLOCK_MONOTONIC, &event_ts);
   return ((event_ts.tv_sec)*1000.0) + ((event_ts.tv_nsec)/1000000.0);
+}
+
+int receiver(void)
+{
+  mqd_t mymq;
+  char buffer[MAX_MSG_SIZE];
+  int prio;
+  int nbytes;
+  mymq = mq_open(SNDRCV_MQ, O_CREAT|O_RDWR, S_IRWXU, &mq_attr);
+
+  if(mymq == (mqd_t)ERROR)
+  {
+    perror("receiver mq_open");
+    exit(-1);
+  }
+
+  /* read oldest, highest priority msg from the message queue */
+  if((nbytes = mq_receive(mymq, buffer, MAX_MSG_SIZE, &prio)) == ERROR)
+  {
+    perror("mq_receive");
+  }
+  else
+  {
+    buffer[nbytes] = '\0';
+    printf("receive: msg %s received with priority = %d, length = %d\n",
+           buffer, prio, nbytes);
+	return(atoi(buffer));
+  }
+    
+}
+
+void sender(int out, int in)
+{
+  mqd_t mymq;
+  int prio;
+  int nbytes;
+  
+  mymq = mq_open(SNDRCV_MQ, O_CREAT|O_RDWR, S_IRWXU, &mq_attr);
+
+  if(mymq < 0)
+  {
+    perror("sender mq_open");
+    exit(-1);
+  }
+  else
+  {
+    printf("sender opened mq\n");
+  }
+	sprintf(canned_msg, "%d", in);
+	
+  /* send message with priority=30 */
+  if((nbytes = mq_send(mymq, canned_msg, sizeof(canned_msg), 30)) == ERROR)
+  {
+    perror("mq_send");
+  }
+  else
+  {
+    printf("send: message successfully sent\n");
+  }
 }
 
 
