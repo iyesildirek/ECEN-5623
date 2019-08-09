@@ -1,4 +1,4 @@
-INCLUDE_DIRS = 
+INCLUDE_DIRS = -I .
 LIB_DIRS = 
 CC=gcc
 
@@ -6,7 +6,7 @@ CDEFS=
 CFLAGS= -O0 -g $(INCLUDE_DIRS) $(CDEFS)
 LIBS= -lrt
 
-HFILES= 
+HFILES= capture.h
 CFILES= capture.c
 
 SRCS= ${HFILES} ${CFILES}
