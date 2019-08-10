@@ -54,42 +54,27 @@ extern int              frame_count = 3;
 extern unsigned int framecnt=0;
 extern unsigned char bigbuffer[(1280*960)];
 
-extern const char short_options[] = "d:hmruofc:";
-
 struct buffer 
 {
         void   *start;
         size_t  length;
 };
 
-extern const struct option
-long_options[] = {
-        { "device", required_argument, NULL, 'd' },
-        { "help",   no_argument,       NULL, 'h' },
-        { "mmap",   no_argument,       NULL, 'm' },
-        { "read",   no_argument,       NULL, 'r' },
-        { "userp",  no_argument,       NULL, 'u' },
-        { "output", no_argument,       NULL, 'o' },
-        { "format", no_argument,       NULL, 'f' },
-        { "count",  required_argument, NULL, 'c' },
-        { 0, 0, 0, 0 }
-};
-
 /* Function Prototypes */
-void errno_exit(const char *s);
-int xioctl(int fh, int request, void *arg);
-void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time);
-void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time);
-void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b);
-void process_image(const void *p, int size);
-int read_frame(void);
-void mainloop(void);
-void start_capturing(void);
-void uninit_device(void);
-void init_read(unsigned int buffer_size);
-void init_mmap(void);
-void init_userp(unsigned int buffer_size);
-void init_device(void);
-void close_device(void);
-void open_device(void);
-void usage(FILE *fp, int argc, char **argv);
+extern void errno_exit(const char *s);
+extern int xioctl(int fh, int request, void *arg);
+extern void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time);
+extern void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time);
+extern void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b);
+extern void process_image(const void *p, int size);
+extern int read_frame(void);
+extern void mainloop(void);
+extern void start_capturing(void);
+extern void uninit_device(void);
+extern void init_read(unsigned int buffer_size);
+extern void init_mmap(void);
+extern void init_userp(unsigned int buffer_size);
+extern void init_device(void);
+extern void close_device(void);
+extern void open_device(void);
+extern void usage(FILE *fp, int argc, char **argv);

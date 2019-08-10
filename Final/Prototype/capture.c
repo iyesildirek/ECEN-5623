@@ -14,14 +14,15 @@
  */
 
 #include <capture.h>
-
-void errno_exit(const char *s)
+    dev_name = "/dev/video0";
+	
+extern void errno_exit(const char *s)
 {
         fprintf(stderr, "%s error %d, %s\n", s, errno, strerror(errno));
         exit(EXIT_FAILURE);
 }
 
-int xioctl(int fh, int request, void *arg)
+extern int xioctl(int fh, int request, void *arg)
 {
         int r;
 
@@ -34,7 +35,7 @@ int xioctl(int fh, int request, void *arg)
         return r;
 }
 
-void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
+extern void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
 {
     int written, i, total, dumpfd;
 
@@ -62,7 +63,7 @@ void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
 
 }
 
-void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time)
+extern void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time)
 {
     int written, i, total, dumpfd;
 
@@ -90,7 +91,7 @@ void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time)
 
 }
 
-void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b)
+extern void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b)
 {
    int r1, g1, b1;
 
@@ -116,7 +117,7 @@ void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned c
    *b = b1 ;
 }
 
-void process_image(const void *p, int size)
+extern void process_image(const void *p, int size)
 {
     int i, newi, newsize=0;
     struct timespec frame_time;
@@ -176,7 +177,7 @@ void process_image(const void *p, int size)
     fflush(stdout);
 }
 
-int read_frame(void)
+extern int read_frame(void)
 {
     struct v4l2_buffer buf;
     unsigned int i;
@@ -213,7 +214,7 @@ int read_frame(void)
     return 1;
 }
 
-void mainloop(void)
+extern void mainloop(void)
 {
     unsigned int count;
     struct timespec read_delay;
@@ -273,7 +274,7 @@ void mainloop(void)
     }
 }
 
-void start_capturing(void)
+extern void start_capturing(void)
 {
         unsigned int i;
         enum v4l2_buf_type type;
@@ -297,7 +298,7 @@ void start_capturing(void)
 
 }
 
-void uninit_device(void)
+extern void uninit_device(void)
 {
         unsigned int i;
                 for (i = 0; i < n_buffers; ++i)
@@ -306,7 +307,7 @@ void uninit_device(void)
         free(buffers);
 }
 
-void init_read(unsigned int buffer_size)
+extern void init_read(unsigned int buffer_size)
 {
         buffers = calloc(1, sizeof(*buffers));
 
@@ -326,7 +327,7 @@ void init_read(unsigned int buffer_size)
         }
 }
 
-void init_mmap(void)
+extern void init_mmap(void)
 {
         struct v4l2_requestbuffers req;
 
@@ -389,7 +390,7 @@ void init_mmap(void)
         }
 }
 
-void init_userp(unsigned int buffer_size)
+extern void init_userp(unsigned int buffer_size)
 {
         struct v4l2_requestbuffers req;
 
@@ -427,7 +428,7 @@ void init_userp(unsigned int buffer_size)
         }
 }
 
-void init_device(void)
+extern void init_device(void)
 {
     struct v4l2_capability cap;
     struct v4l2_cropcap cropcap;
@@ -516,7 +517,7 @@ void init_device(void)
 	init_mmap();
 }
 
-void close_device(void)
+extern void close_device(void)
 {
         if (-1 == close(fd))
                 errno_exit("close");
@@ -524,7 +525,7 @@ void close_device(void)
         fd = -1;
 }
 
-void open_device(void)
+extern void open_device(void)
 {
         struct stat st;
 
@@ -548,7 +549,7 @@ void open_device(void)
         }
 }
 
-void usage(FILE *fp, int argc, char **argv)
+extern void usage(FILE *fp, int argc, char **argv)
 {
         fprintf(fp,
                  "Usage: %s [options]\n\n"

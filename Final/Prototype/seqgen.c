@@ -43,12 +43,28 @@
 */
 
 #define _GNU_SOURCE
-#include "capture.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#include <getopt.h>             /* getopt_long() */
+#include <fcntl.h>              /* low-level i/o */
+#include <unistd.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/mman.h>
+#include <sys/ioctl.h>
+#include <linux/videodev2.h>
+#include <time.h>
+
 #include <pthread.h>
 #include <sched.h>
 #include <semaphore.h>
 #include <syslog.h>
-
+#include "capture.h"
 
 #define USEC_PER_MSEC (1000)
 #define NANOSEC_PER_SEC (1000000000)
@@ -93,8 +109,19 @@ void print_scheduler(void);
 	double deadline_in_ms = 100; //10Hz
 	double deadline_in_ms_one_hz = 1000; //1Hz
 	double frame_ex_time_ms = 0;
-
-
+extern const char short_options[] = "d:hmruofc:";
+extern const struct option
+long_options[] = {
+        { "device", required_argument, NULL, 'd' },
+        { "help",   no_argument,       NULL, 'h' },
+        { "mmap",   no_argument,       NULL, 'm' },
+        { "read",   no_argument,       NULL, 'r' },
+        { "userp",  no_argument,       NULL, 'u' },
+        { "output", no_argument,       NULL, 'o' },
+        { "format", no_argument,       NULL, 'f' },
+        { "count",  required_argument, NULL, 'c' },
+        { 0, 0, 0, 0 }
+};
 void main(int argc, char **argv)
 {
     struct timeval current_time_val;
@@ -175,7 +202,7 @@ void main(int argc, char **argv)
     printf("Service threads will run on %d CPU cores\n", CPU_COUNT(&threadcpu));
 
 /************************* Get camera ready prior to threads*************************/
-    dev_name = "/dev/video0";
+
     for (;;)
     {
         int idx;
