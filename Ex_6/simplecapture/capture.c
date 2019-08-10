@@ -237,7 +237,9 @@ static int read_frame(void)
 {
     struct v4l2_buffer buf;
     unsigned int i;
-
+	    // record when process was called
+    clock_gettime(CLOCK_REALTIME, &frame_time);
+	printf("")
             CLEAR(buf);
             buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
             buf.memory = V4L2_MEMORY_MMAP;

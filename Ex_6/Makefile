@@ -17,7 +17,7 @@ OBJS= ${CFILES:.c=.o}
 all:	${PRODUCT}
 
 clean:
-	-rm -f *.o *.pgm *~ *.d
+	-rm -f *.o *.pgm *~ *.d *.ppm
 	-rm -f ${PRODUCT} ${GARBAGE} outputFile.txt
 
 pthread:	pthread.o

@@ -232,6 +232,7 @@ void main(void)
 void *Sequencer(void *threadp)
 {
     struct timeval current_time_val;
+	struct timeval prev_time_val;
     //struct timespec delay_time = {0,8333333}; // delay for 8.33 msec, 120 Hz
 	//struct timespec delay_time = {0,50000000}; // delay for 50.00 msec, 20 Hz
 	struct timespec delay_time = {0,10000000}; // delay for 10.00 msec, 100 Hz
@@ -241,15 +242,27 @@ void *Sequencer(void *threadp)
     int rc, delay_cnt=0;
 	int seq_sum = capture_seq_period; // run for x seconds (seq_sum/freq)
     unsigned long long seqCnt=0;
+	double ave_jitter = 0.0;
+	double current_ex_start = 0.0;
+	double total_ex = 0.0; 
+	double delta_ex = 0.0;
+	double ave_execution = 0.0;
+	double ave_jitter_ten_hz = 0.0;
+	double ave_jitter_one_hz = 0.0;
+	double wcet = 0;
     threadParams_t *threadParams = (threadParams_t *)threadp;
 
     gettimeofday(&current_time_val, (struct timezone *)0);
-    syslog(LOG_CRIT, "Sequencer thread started @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-    //printf("Sequencer thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
+    syslog(LOG_CRIT, "Sequencer thread started @ sec=%lf, msec=%lf\n",(current_time_val.tv_sec-start_time_val.tv_sec), current_time_val.tv_usec/USEC_PER_MSEC);
+    printf("Sequencer thread started @ sec=%0.1lf, msec=%0.1lf\n", (current_time_val.tv_sec-start_time_val.tv_sec), current_time_val.tv_usec/USEC_PER_MSEC);
 
     do
     {
-        delay_cnt=0; residual=0.0;
+        gettimeofday(&current_time_val, (struct timezone *)0);
+        syslog(LOG_CRIT, "Sequencer cycle %llu @ sec=%lf, msec=%lf\n", seqCnt, (current_time_val.tv_sec-start_time_val.tv_sec), current_time_val.tv_usec/USEC_PER_MSEC);
+   
+		current_ex_start = current_time_val.tv_usec/USEC_PER_MSEC; //mS
+		delay_cnt=0; residual=0.0;
 
         //gettimeofday(&current_time_val, (struct timezone *)0);
         syslog(LOG_CRIT, "Sequencer thread prior to delay @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
@@ -274,13 +287,28 @@ void *Sequencer(void *threadp)
         } while((residual > 0.0) && (delay_cnt < 100));
 
         seqCnt++;
-        gettimeofday(&current_time_val, (struct timezone *)0);
-        syslog(LOG_CRIT, "Sequencer cycle %llu @ sec=%d, msec=%d\n", seqCnt, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-
-
-        if(delay_cnt > 1) printf("Sequencer looping delay %d\n", delay_cnt);
-
-
+ 
+	   gettimeofday(&prev_time_val, (struct timezone *)0);
+        //syslog(LOG_CRIT, "Sequencer release all sub-services @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
+		if(prev_time_val.tv_usec/USEC_PER_MSEC < current_ex_start)
+		{
+		 delta_ex = current_ex_start - (prev_time_val.tv_usec/USEC_PER_MSEC);
+		 ave_execution = (delta_ex+ave_execution)/2;
+		 ave_jitter = (ave_jitter + 10 - delta_ex)/2; //100Hz
+		}
+		else
+		{
+			delta_ex = (prev_time_val.tv_usec/USEC_PER_MSEC)-current_ex_start;
+			ave_execution = (delta_ex+ave_execution)/2;
+		 ave_jitter = (ave_jitter + 10 - delta_ex)/2; //100Hz
+		}
+		if(wcet<delta_ex)
+		{
+			wcet = delta_ex; //get seconds
+			//printf("WCET is =%0.1f mS\n", wcet);
+		}
+		
+		if(delay_cnt > 1) printf("Sequencer looping delay %d\n", delay_cnt);
         // Release each service at a sub-rate of the generic sequencer rate
         // Servcie_1 = RT_MAX-1	@ 10 Hz
         //if((seqCnt % 12) == 0) sem_post(&semS1);@120HZ
@@ -289,17 +317,26 @@ void *Sequencer(void *threadp)
         // Service_2 = RT_MAX-2	@ 1 Hz
         //if((seqCnt % 120) == 0) sem_post(&semS2);@120HZ
 		if((seqCnt % 100) == 0) sem_post(&semS2);//@100HZ
-        //gettimeofday(&current_time_val, (struct timezone *)0);
-        //syslog(LOG_CRIT, "Sequencer release all sub-services @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-
+		
+ 
     } while(!abortTest && (seqCnt < threadParams->sequencePeriods));
 
     sem_post(&semS1); sem_post(&semS2); sem_post(&semS3);
     abortS1=TRUE; abortS2=TRUE; abortS3=TRUE;
     
 	syslog(LOG_CRIT, "Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-    //printf("Sequencer thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-	syslog(LOG_CRIT, "Last number queued to W1 =%d\n", seq_sum);
+    printf("Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
+	//syslog(LOG_CRIT, "Last number queued to W1 =%d\n", seq_sum);
+	//ave_execution = total_ex/1000;
+	//ave_jitter_ten_hz = ave_jitter_ten_hz/1000;
+	//ave_jitter_one_hz = ave_jitter_one_hz/1000;
+	//ave_jitter = ave_jitter/10000;
+	printf("Average execution with delay is = %f mS\n", ave_execution);
+	printf("Average sequencer execution is = %f uS\n", (ave_execution-10)*1000);
+	printf("WCET is = %0.1f mS\n", wcet);
+	//printf("Average Jitter for 10Hz is = %0.1f mS\n",ave_jitter_ten_hz);
+	//printf("Average Jitter for 1Hz is = %0.1f mS\n",ave_jitter_one_hz);
+	printf("Average Jitter for sequencer is = %0.1f mS\n",ave_jitter);
     pthread_exit((void *)0);
 }
 

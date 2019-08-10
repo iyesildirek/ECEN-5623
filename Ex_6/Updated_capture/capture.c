@@ -15,6 +15,9 @@
 
 #include <capture.h>
 
+#define NUM_THREADS (1)
+void *Sequencer(void *threadp);
+
 static void errno_exit(const char *s)
 {
         fprintf(stderr, "%s error %d, %s\n", s, errno, strerror(errno));
@@ -122,9 +125,7 @@ static void process_image(const void *p, int size)
     struct timespec frame_time;
     int y_temp, y2_temp, u_temp, v_temp;
     unsigned char *pptr = (unsigned char *)p;
-
-    // record when process was called
-    clock_gettime(CLOCK_REALTIME, &frame_time);    
+ 
 
     framecnt++;
     printf("frame %d: ", framecnt);
@@ -228,7 +229,9 @@ static void mainloop(void)
     {
         for (;;)
         {
-            fd_set fds;
+            /*Start Frame timer*/
+			
+			fd_set fds;
             struct timeval tv;
             int r;
 
@@ -262,6 +265,9 @@ static void mainloop(void)
                     printf("time_error.tv_sec=%ld, time_error.tv_nsec=%ld\n", time_error.tv_sec, time_error.tv_nsec);
 
                 count--;
+				
+				/*Stop Frame timer*/
+				
                 break;
             }
 
@@ -565,10 +571,77 @@ static void usage(FILE *fp, int argc, char **argv)
                  "",
                  argv[0], dev_name, frame_count);
 }
-/*
+
+
+typedef struct
+{
+    int threadIdx;
+    unsigned long long sequencePeriods;
+} threadParams_t;
+
 int main(int argc, char **argv)
 {
-        dev_name = "/dev/video0";
+    pthread_t threads[NUM_THREADS];
+    threadParams_t threadParams[NUM_THREADS];
+    pthread_attr_t rt_sched_attr[NUM_THREADS];
+    int rt_max_prio, rt_min_prio;
+    struct sched_param rt_param[NUM_THREADS];
+    struct sched_param main_param;
+    pthread_attr_t main_attr;
+    pid_t mainpid;  
+		
+	   mainpid=getpid();
+
+    rt_max_prio = sched_get_priority_max(SCHED_FIFO);
+    rt_min_prio = sched_get_priority_min(SCHED_FIFO);
+
+    rc=sched_getparam(mainpid, &main_param);
+    main_param.sched_priority=rt_max_prio;
+    rc=sched_setscheduler(getpid(), SCHED_FIFO, &main_param);
+    if(rc < 0) perror("main_param");
+    print_scheduler();
+
+
+    pthread_attr_getscope(&main_attr, &scope);
+
+    if(scope == PTHREAD_SCOPE_SYSTEM)
+      printf("PTHREAD SCOPE SYSTEM\n");
+    else if (scope == PTHREAD_SCOPE_PROCESS)
+      printf("PTHREAD SCOPE PROCESS\n");
+    else
+      printf("PTHREAD SCOPE UNKNOWN\n");
+
+    printf("rt_max_prio=%d\n", rt_max_prio);
+    printf("rt_min_prio=%d\n", rt_min_prio);
+
+    for(i=0; i < NUM_THREADS; i++)
+    {
+
+      rc=pthread_attr_init(&rt_sched_attr[i]);
+      rc=pthread_attr_setinheritsched(&rt_sched_attr[i], PTHREAD_EXPLICIT_SCHED);
+      rc=pthread_attr_setschedpolicy(&rt_sched_attr[i], SCHED_FIFO);
+      //rc=pthread_attr_setaffinity_np(&rt_sched_attr[i], sizeof(cpu_set_t), &threadcpu);
+
+      rt_param[i].sched_priority=rt_max_prio-i;
+      pthread_attr_setschedparam(&rt_sched_attr[i], &rt_param[i]);
+
+      threadParams[i].threadIdx=i;
+    }
+   	
+    rt_param[1].sched_priority=rt_max_prio-1;
+    pthread_attr_setschedparam(&rt_sched_attr[1], &rt_param[1]);
+    rc=pthread_create(&threads[1],               // pointer to thread descriptor
+                      &rt_sched_attr[1],         // use specific attributes
+                      //(void *)0,               // default attributes
+                      Service_1,                 // thread function entry point
+                      (void *)&(threadParams[1]) // parameters to pass in
+                     );
+    if(rc < 0)
+        perror("pthread_create for service W1");
+    else
+        printf("pthread_create successful for service W1\n");
+
+		dev_name = "/dev/video0";
     for (;;)
     {
         int idx;
@@ -590,4 +663,3 @@ int main(int argc, char **argv)
     fprintf(stderr, "\n");
     return 0;
 }
-*/
