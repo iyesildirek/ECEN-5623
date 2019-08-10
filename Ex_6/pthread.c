@@ -194,6 +194,16 @@ void print_scheduler(void);
 double getTimeMsec(void);
 /* End prototype list */
 
+/* Global Variables */
+	double sec_time = 0.0;
+	double sec_time_in_ms = 0.0;
+	double nano_time_in_ms = 0.0;
+	double ms_time = 0.0;
+	double deadline_in_ms = 100; //10Hz
+	double deadline_in_ms_one_hz = 1000; //1Hz
+	double frame_ex_time_ms = 0;
+
+/*****************************************/
 
 
 /* Thread #1*/
@@ -223,14 +233,6 @@ void *transform(void *threadp)
        rtclk_start_time.tv_sec, rtclk_start_time.tv_nsec);
 	int i;
     threadParams_t *threadParams = (threadParams_t *)threadp;
-
- /*   for(i=0; i<200; i++)
-    {
-        rt_precision.x = rt_precision.x+(double)i;
-    }
-	rt_precision.y = 30.05*3.5;
-	printf("The precision value for x is: %0.2f and y is: %0.2f\n",rt_precision.x, rt_precision.y);
-	*/
 	loop++;
 	   while(loop < 5)
 		{
@@ -379,13 +381,7 @@ int main (int argc, char *argv[])
     open_device();
     init_device();
 	start_capturing();
-	double sec_time = 0.0;
-	double sec_time_in_ms = 0.0;
-	double nano_time_in_ms = 0.0;
-	double ms_time = 0.0;
-	double deadline_in_ms = 100; //10Hz
-	double deadline_in_ms_one_hz = 1000; //1Hz
-	double frame_ex_time_ms = 0;
+
 		/* start frames time stamp */ 
 	clock_gettime(CLOCK_REALTIME, &frame_start_time);
 	printf("RT clock start seconds = %ld, nanoseconds = %ld\n", \
