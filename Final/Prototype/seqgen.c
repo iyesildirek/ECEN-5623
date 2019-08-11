@@ -13,7 +13,7 @@
 * - seqgen.c
 * - posix_mq.c
 *************************************************************************/
-
+/*
 // Sam Siewert, December 2017
 //
 // Sequencer Generic
@@ -32,6 +32,7 @@
 // Service_2 = RT_MAX-2	@ 1 Hz
 //
 // This is necessary for CPU affinity macros in Linux
+*/
 
 /*
 * Compile code by using the gcc command below:
@@ -109,6 +110,7 @@ void print_scheduler(void);
 	double deadline_in_ms = 100; //10Hz
 	double deadline_in_ms_one_hz = 1000; //1Hz
 	double frame_ex_time_ms = 0;
+	
 extern const char short_options[] = "d:hmruofc:";
 extern const struct option
 long_options[] = {
@@ -122,6 +124,7 @@ long_options[] = {
         { "count",  required_argument, NULL, 'c' },
         { 0, 0, 0, 0 }
 };
+
 void main(int argc, char **argv)
 {
     struct timeval current_time_val;
@@ -288,8 +291,6 @@ void *Sequencer(void *threadp)
 {
     struct timeval current_time_val;
 	struct timeval prev_time_val;
-    //struct timespec delay_time = {0,8333333}; // delay for 8.33 msec, 120 Hz
-	//struct timespec delay_time = {0,50000000}; // delay for 50.00 msec, 20 Hz
 	struct timespec delay_time = {0,10000000}; // delay for 10.00 msec, 100 Hz
     struct timespec remaining_time;
     double current_time;
@@ -309,7 +310,7 @@ void *Sequencer(void *threadp)
 
     gettimeofday(&current_time_val, (struct timezone *)0);
     syslog(LOG_CRIT, "Sequencer thread started @ sec=%lf, msec=%lf\n",(current_time_val.tv_sec-start_time_val.tv_sec), current_time_val.tv_usec/USEC_PER_MSEC);
-    printf("Sequencer thread started @ sec=%0.1lf, msec=%0.1lf\n", (current_time_val.tv_sec-start_time_val.tv_sec), current_time_val.tv_usec/USEC_PER_MSEC);
+    //printf("Sequencer thread started @ sec=%0.1lf, msec=%0.1lf\n", (current_time_val.tv_sec-start_time_val.tv_sec), current_time_val.tv_usec/USEC_PER_MSEC);
 
     do
     {
@@ -323,7 +324,7 @@ void *Sequencer(void *threadp)
         syslog(LOG_CRIT, "Sequencer thread prior to delay @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
         do
         {
-            rc=nanosleep(&delay_time, &remaining_time);
+            rc=clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME,&delay_time, &remaining_time);
 
             if(rc == EINTR)
             { 
@@ -369,15 +370,11 @@ void *Sequencer(void *threadp)
         //if((seqCnt % 12) == 0) sem_post(&semS1);@120HZ
 		if((seqCnt % 10) == 0) sem_post(&semS1);//@100HZ
 		
-        // Service_2 = RT_MAX-2	@ 1 Hz
-        //if((seqCnt % 120) == 0) sem_post(&semS2);@120HZ
-		if((seqCnt % 100) == 0) sem_post(&semS2);//@100HZ
-		
  
     } while(!abortTest && (seqCnt < threadParams->sequencePeriods));
 
-    sem_post(&semS1); sem_post(&semS2); sem_post(&semS3);
-    abortS1=TRUE; abortS2=TRUE; abortS3=TRUE;
+    sem_post(&semS1); sem_post(&semS2); 
+    abortS1=TRUE; abortS2=TRUE; 
     
 	syslog(LOG_CRIT, "Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
     printf("Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
@@ -403,43 +400,6 @@ void *Service_1(void *threadp)
     unsigned long long S1Cnt=0;
     threadParams_t *threadParams = (threadParams_t *)threadp;
 
-
-/* To Integrate*/
-
-		/* start frames time stamp */ 
-	clock_gettime(CLOCK_REALTIME, &frame_start_time);
-	printf("RT clock start seconds = %ld, nanoseconds = %ld\n", \
-    frame_start_time.tv_sec, frame_start_time.tv_nsec);	
-
-    mainloop();
-		
-	/* End time stamp */
-	clock_gettime(CLOCK_REALTIME, &frame_stop_time);
-	printf("RT clock stop seconds = %ld, nanoseconds = %ld\n", \
-    frame_stop_time.tv_sec, frame_stop_time.tv_nsec);
-	sec_time = (frame_stop_time.tv_sec - frame_start_time.tv_sec);
-	if(frame_stop_time.tv_nsec < frame_start_time.tv_nsec)
-	{
-		nano_time_in_ms = (frame_start_time.tv_nsec - (frame_stop_time.tv_nsec+1000000000));
-		ms_time = sec_time*1000+nano_time_in_ms/1000000;
-		frame_ex_time_ms = ms_time/5;
-		
-	}
-	else 
-	{
-		nano_time_in_ms = (frame_stop_time.tv_nsec - frame_start_time.tv_nsec)/1000000;
-		ms_time = sec_time*1000+nano_time_in_ms;
-		frame_ex_time_ms = ms_time/5;
-	}
-
-	printf("Capture time per 5 frames is = %0.lf S and %0.1f mS\n", sec_time, nano_time_in_ms);
-	printf("Frame average execution time is = %0.1f mS.\n", frame_ex_time_ms);
-	printf("Average Jitter for 10Hz is = %0.1f mS\n",deadline_in_ms - frame_ex_time_ms);
-	printf("Average Jitter for 1Hz is = %0.1f mS\n",deadline_in_ms_one_hz - frame_ex_time_ms);
-
-/**********************************************************/
-
-
     gettimeofday(&current_time_val, (struct timezone *)0);
     syslog(LOG_CRIT, "10HZ W1 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
     //printf("10HZ W1 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
@@ -448,6 +408,42 @@ void *Service_1(void *threadp)
     {
         sem_wait(&semS1);
         S1Cnt++;
+
+/* To Integrate*/
+
+		/* start frames time stamp */ 
+	clock_gettime(CLOCK_REALTIME, &frame_start_time);
+	printf("Frame Capture start seconds = %ld, nanoseconds = %ld\n", \
+    frame_start_time.tv_sec, frame_start_time.tv_nsec);	
+
+    mainloop();
+		
+	/* End time stamp */
+	clock_gettime(CLOCK_REALTIME, &frame_stop_time);
+	printf("Frame Capture stop seconds = %ld, nanoseconds = %ld\n", \
+    frame_stop_time.tv_sec, frame_stop_time.tv_nsec);
+	
+	sec_time = (frame_stop_time.tv_sec - frame_start_time.tv_sec);
+	if(frame_stop_time.tv_nsec < frame_start_time.tv_nsec)
+	{
+		nano_time_in_ms = (frame_start_time.tv_nsec - (frame_stop_time.tv_nsec+1000000000));
+		ms_time = sec_time*1000+nano_time_in_ms/1000000;
+		frame_ex_time_ms = ms_time/frame_count;
+		
+	}
+	else 
+	{
+		nano_time_in_ms = (frame_stop_time.tv_nsec - frame_start_time.tv_nsec)/1000000;
+		ms_time = sec_time*1000+nano_time_in_ms;
+		frame_ex_time_ms = ms_time/frame_count;
+	}
+
+	printf("Capture time per %d frames is = %0.lf S and %0.1f mS\n", frame_count, sec_time, nano_time_in_ms);
+	printf("Frame average execution time is = %0.1f mS.\n", frame_ex_time_ms);
+	printf("Average Jitter for 10Hz is = %0.1f mS\n",deadline_in_ms - frame_ex_time_ms);
+	printf("Average Jitter for 1Hz is = %0.1f mS\n",deadline_in_ms_one_hz - frame_ex_time_ms);
+
+/**********************************************************/
 
         gettimeofday(&current_time_val, (struct timezone *)0);
         syslog(LOG_CRIT, "10HZ W1 thread release %llu @ sec=%d, msec=%d\n", S1Cnt, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);

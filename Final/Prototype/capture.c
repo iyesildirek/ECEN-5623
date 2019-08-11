@@ -31,7 +31,7 @@ int              fd = -1;
  unsigned int     n_buffers;
 int              out_buf;
 int              force_format=1;
-int              frame_count = 3;
+int              frame_count = 1;
 
 unsigned int framecnt=0;
 unsigned char bigbuffer[(1280*960)];
@@ -79,7 +79,7 @@ void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
         total+=written;
     } while(total < size);
 
-    printf("wrote %d bytes\n", total);
+   //printf("wrote %d bytes\n", total);
 
     close(dumpfd);
 
@@ -279,13 +279,12 @@ void mainloop(void)
 
             if (read_frame())
             {
-             
-//remove nano sleep
-			 if(nanosleep(&read_delay, &time_error) != 0)
+             /* Let sequencer take care of this.
+			 if(clocl_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME,&read_delay, &time_error) != 0)
                     perror("nanosleep");
-                else
+             else
                     printf("time_error.tv_sec=%ld, time_error.tv_nsec=%ld\n", time_error.tv_sec, time_error.tv_nsec);
-
+			*/
                 count--;
                 break;
             }
