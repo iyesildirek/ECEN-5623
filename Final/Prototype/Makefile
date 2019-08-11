@@ -8,7 +8,7 @@ CFLAGS= -O0 -g $(INCLUDE_DIRS) $(CDEFS)
 
 LIBS= -lpthread -lrt
 
-PRODUCT= seqgen capture 
+PRODUCT= seqgen
 
 HFILES= capture.h
 CFILES= capture.c seqgen.c
@@ -22,11 +22,8 @@ clean:
 	-rm -f *.o *.pgm *~ *.d *.ppm
 	-rm -f ${PRODUCT} ${GARBAGE} outputFile.txt
 
-seqgen:	seqgen.o
-	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ seqgen.o $(LIBS)
-
-capture: capture.o
-	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ capture.o $(LIBS)
+seqgen:	seqgen.o capture.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ seqgen.o capture.o $(LIBS)
 
 depend:
 

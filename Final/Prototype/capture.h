@@ -27,54 +27,50 @@
 
 // Format is used by a number of functions, so made as a file global
 extern struct v4l2_format fmt;
+extern char *dev_name;
 
-extern char ppm_header[]="P6\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
-extern char ppm_dumpname[]="test00000000.ppm";
-
-extern char pgm_header[]="P5\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
-extern char pgm_dumpname[]="test00000000.pgm";
-
-extern char            *dev_name;
-
-enum io_method 
+typedef enum io_method 
 {
         IO_METHOD_READ,
         IO_METHOD_MMAP,
         IO_METHOD_USERPTR,
-};
+} io_method;
 
-extern enum io_method   io = IO_METHOD_MMAP;
-extern int              fd = -1;
+extern io_method   io;
+extern int              fd ;
 extern struct buffer          *buffers;
 extern unsigned int     n_buffers;
 extern int              out_buf;
-extern int              force_format=1;
-extern int              frame_count = 3;
+extern int              force_format;
+extern int              frame_count;
 
-extern unsigned int framecnt=0;
+extern unsigned int framecnt;
 extern unsigned char bigbuffer[(1280*960)];
 
-struct buffer 
+typedef struct buffer 
 {
         void   *start;
         size_t  length;
-};
+}buffer_t;
+
+extern buffer_t buffer;
 
 /* Function Prototypes */
-extern void errno_exit(const char *s);
-extern int xioctl(int fh, int request, void *arg);
-extern void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time);
-extern void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time);
-extern void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b);
-extern void process_image(const void *p, int size);
-extern int read_frame(void);
-extern void mainloop(void);
-extern void start_capturing(void);
-extern void uninit_device(void);
-extern void init_read(unsigned int buffer_size);
-extern void init_mmap(void);
-extern void init_userp(unsigned int buffer_size);
-extern void init_device(void);
-extern void close_device(void);
-extern void open_device(void);
-extern void usage(FILE *fp, int argc, char **argv);
+void errno_exit(const char *s);
+int xioctl(int fh, int request, void *arg);
+void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time);
+void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time);
+void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b);
+void process_image(const void *p, int size);
+int read_frame(void);
+void mainloop(void);
+void start_capturing(void);
+void uninit_device(void);
+void init_read(unsigned int buffer_size);
+void init_mmap(void);
+void init_userp(unsigned int buffer_size);
+void init_device(void);
+void close_device(void);
+void open_device(void);
+void usage(FILE *fp, int argc, char **argv);
+void stop_capturing(void);

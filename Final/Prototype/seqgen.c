@@ -136,7 +136,7 @@ void main(int argc, char **argv)
     pthread_attr_t main_attr;
     pid_t mainpid;
     cpu_set_t allcpuset;
-
+	dev_name = "/dev/video0";
     printf("Starting Sequencer Demo\n");
     gettimeofday(&start_time_val, (struct timezone *)0);
     gettimeofday(&current_time_val, (struct timezone *)0);
@@ -191,7 +191,7 @@ void main(int argc, char **argv)
       rc=pthread_attr_init(&rt_sched_attr[i]);
       rc=pthread_attr_setinheritsched(&rt_sched_attr[i], PTHREAD_EXPLICIT_SCHED);
       rc=pthread_attr_setschedpolicy(&rt_sched_attr[i], SCHED_FIFO);
-      //rc=pthread_attr_setaffinity_np(&rt_sched_attr[i], sizeof(cpu_set_t), &threadcpu);
+      rc=pthread_attr_setaffinity_np(&rt_sched_attr[i], sizeof(cpu_set_t), &threadcpu);
 
       rt_param[i].sched_priority=rt_max_prio-i;
       pthread_attr_setschedparam(&rt_sched_attr[i], &rt_param[i]);

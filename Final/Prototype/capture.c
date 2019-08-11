@@ -14,15 +14,37 @@
  */
 
 #include <capture.h>
-    dev_name = "/dev/video0";
+
+// Format is used by a number of functions, so made as a file global
+ struct v4l2_format fmt;
+
+ char ppm_header[]="P6\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
+ char ppm_dumpname[]="test00000000.ppm";
+ char pgm_header[]="P1\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
+ char pgm_dumpname[]="test00000000.ppm";
+
+ char *dev_name = "/dev/video0";
+
+io_method   io = IO_METHOD_MMAP;
+int              fd = -1;
+ struct buffer          *buffers;
+ unsigned int     n_buffers;
+int              out_buf;
+int              force_format=1;
+int              frame_count = 3;
+
+unsigned int framecnt=0;
+unsigned char bigbuffer[(1280*960)];
+
+buffer_t buffer;
 	
-extern void errno_exit(const char *s)
+void errno_exit(const char *s)
 {
         fprintf(stderr, "%s error %d, %s\n", s, errno, strerror(errno));
         exit(EXIT_FAILURE);
 }
 
-extern int xioctl(int fh, int request, void *arg)
+int xioctl(int fh, int request, void *arg)
 {
         int r;
 
@@ -35,7 +57,7 @@ extern int xioctl(int fh, int request, void *arg)
         return r;
 }
 
-extern void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
+void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
 {
     int written, i, total, dumpfd;
 
@@ -63,7 +85,7 @@ extern void dump_ppm(const void *p, int size, unsigned int tag, struct timespec 
 
 }
 
-extern void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time)
+void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time)
 {
     int written, i, total, dumpfd;
 
@@ -91,7 +113,7 @@ extern void dump_pgm(const void *p, int size, unsigned int tag, struct timespec 
 
 }
 
-extern void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b)
+void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b)
 {
    int r1, g1, b1;
 
@@ -117,7 +139,7 @@ extern void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, uns
    *b = b1 ;
 }
 
-extern void process_image(const void *p, int size)
+void process_image(const void *p, int size)
 {
     int i, newi, newsize=0;
     struct timespec frame_time;
@@ -177,7 +199,7 @@ extern void process_image(const void *p, int size)
     fflush(stdout);
 }
 
-extern int read_frame(void)
+int read_frame(void)
 {
     struct v4l2_buffer buf;
     unsigned int i;
@@ -214,7 +236,7 @@ extern int read_frame(void)
     return 1;
 }
 
-extern void mainloop(void)
+void mainloop(void)
 {
     unsigned int count;
     struct timespec read_delay;
@@ -257,7 +279,9 @@ extern void mainloop(void)
 
             if (read_frame())
             {
-                if(nanosleep(&read_delay, &time_error) != 0)
+             
+//remove nano sleep
+			 if(nanosleep(&read_delay, &time_error) != 0)
                     perror("nanosleep");
                 else
                     printf("time_error.tv_sec=%ld, time_error.tv_nsec=%ld\n", time_error.tv_sec, time_error.tv_nsec);
@@ -274,7 +298,7 @@ extern void mainloop(void)
     }
 }
 
-extern void start_capturing(void)
+void start_capturing(void)
 {
         unsigned int i;
         enum v4l2_buf_type type;
@@ -298,7 +322,7 @@ extern void start_capturing(void)
 
 }
 
-extern void uninit_device(void)
+void uninit_device(void)
 {
         unsigned int i;
                 for (i = 0; i < n_buffers; ++i)
@@ -307,7 +331,7 @@ extern void uninit_device(void)
         free(buffers);
 }
 
-extern void init_read(unsigned int buffer_size)
+void init_read(unsigned int buffer_size)
 {
         buffers = calloc(1, sizeof(*buffers));
 
@@ -327,7 +351,7 @@ extern void init_read(unsigned int buffer_size)
         }
 }
 
-extern void init_mmap(void)
+void init_mmap(void)
 {
         struct v4l2_requestbuffers req;
 
@@ -390,7 +414,7 @@ extern void init_mmap(void)
         }
 }
 
-extern void init_userp(unsigned int buffer_size)
+void init_userp(unsigned int buffer_size)
 {
         struct v4l2_requestbuffers req;
 
@@ -428,7 +452,7 @@ extern void init_userp(unsigned int buffer_size)
         }
 }
 
-extern void init_device(void)
+void init_device(void)
 {
     struct v4l2_capability cap;
     struct v4l2_cropcap cropcap;
@@ -517,7 +541,7 @@ extern void init_device(void)
 	init_mmap();
 }
 
-extern void close_device(void)
+void close_device(void)
 {
         if (-1 == close(fd))
                 errno_exit("close");
@@ -525,7 +549,7 @@ extern void close_device(void)
         fd = -1;
 }
 
-extern void open_device(void)
+void open_device(void)
 {
         struct stat st;
 
@@ -549,7 +573,7 @@ extern void open_device(void)
         }
 }
 
-extern void usage(FILE *fp, int argc, char **argv)
+void usage(FILE *fp, int argc, char **argv)
 {
         fprintf(fp,
                  "Usage: %s [options]\n\n"
@@ -565,6 +589,24 @@ extern void usage(FILE *fp, int argc, char **argv)
                  "-c | --count         Number of frames to grab [%i]\n"
                  "",
                  argv[0], dev_name, frame_count);
+}
+
+void stop_capturing(void)
+{
+        enum v4l2_buf_type type;
+
+        switch (io) {
+        case IO_METHOD_READ:
+                /* Nothing to do. */
+                break;
+
+        case IO_METHOD_MMAP:
+        case IO_METHOD_USERPTR:
+                type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                if (-1 == xioctl(fd, VIDIOC_STREAMOFF, &type))
+                        errno_exit("VIDIOC_STREAMOFF");
+                break;
+        }
 }
 
 /*
