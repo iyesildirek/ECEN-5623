@@ -10,7 +10,7 @@ LIBS= -lpthread -lrt
 
 PRODUCT= time_lapse
 
-HFILES= capture.h
+HFILES= capture.h time_lapse.h
 CFILES= capture.c time_lapse.c
 
 SRCS= ${HFILES} ${CFILES}
