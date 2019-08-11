@@ -80,9 +80,13 @@ int abortS1=FALSE, abortS2=FALSE, abortS3=FALSE;
 sem_t semS1, semS2, semS3;
 struct timeval start_time_val;
 
-/*To set test duration of 10 seconds*/
-unsigned long long capture_period = 1000;
-int capture_seq_period = 1000;
+/**************************************************
+* To set test duration of 110 seconds for 
+* - 100 frames @ 10Hz or 
+* - 10 frames @ 1 Hz
+**************************************************/
+unsigned long long capture_period = 1100;
+int capture_seq_period = 1100;
 
 /*Time for each frame */
 static struct timespec frame_start_time = {0, 0};
@@ -173,6 +177,29 @@ void main(int argc, char **argv)
     print_scheduler();
 
 
+/************************* Get camera ready prior to threads*************************/
+	struct timespec camera_start_time = {0,10000000000}; // delay for 1s
+    
+    for (;;)
+    {
+        int idx;
+        int c;
+        c = getopt_long(argc, argv,
+                    short_options, long_options, &idx);
+        if (-1 == c)
+            break;
+        usage(stderr, argc, argv);
+        exit(EXIT_FAILURE);
+    }
+	
+	open_device();
+    init_device();
+	start_capturing();
+	clock_nanosleep(CLOCK_REALTIME, 0,&camera_start_time, NULL);
+	clock_nanosleep(CLOCK_REALTIME, 0,&camera_start_time, NULL);
+	clock_nanosleep(CLOCK_REALTIME, 0,&camera_start_time, NULL);
+/*********************************************************************************/
+
     pthread_attr_getscope(&main_attr, &scope);
 
     if(scope == PTHREAD_SCOPE_SYSTEM)
@@ -204,29 +231,6 @@ void main(int argc, char **argv)
    
     printf("Service threads will run on %d CPU cores\n", CPU_COUNT(&threadcpu));
 
-/************************* Get camera ready prior to threads*************************/
-
-    for (;;)
-    {
-        int idx;
-        int c;
-        c = getopt_long(argc, argv,
-                    short_options, long_options, &idx);
-        if (-1 == c)
-            break;
-        usage(stderr, argc, argv);
-        exit(EXIT_FAILURE);
-    }
-	
-	open_device();
-    init_device();
-	start_capturing();
-/*********************************************************************************/
-  // Create Service threads which will block awaiting release for:
-    //
-
-    // Servcie_1 = RT_MAX-1	@ 3 Hz
-    //
     rt_param[1].sched_priority=rt_max_prio-1;
     pthread_attr_setschedparam(&rt_sched_attr[1], &rt_param[1]);
     rc=pthread_create(&threads[1],               // pointer to thread descriptor
@@ -239,32 +243,12 @@ void main(int argc, char **argv)
         perror("pthread_create for service W1");
     else
         printf("pthread_create successful for service W1\n");
-
-
-    // Service_2 = RT_MAX-2	@ 1 Hz
-    //
-    rt_param[2].sched_priority=rt_max_prio-2;
-    pthread_attr_setschedparam(&rt_sched_attr[2], &rt_param[2]);
-    rc=pthread_create(&threads[2], &rt_sched_attr[2], Service_2, (void *)&(threadParams[2]));
-    if(rc < 0)
-        perror("pthread_create for service W2");
-    else
-        printf("pthread_create successful for service W2\n");
-
-
-    // Wait for service threads to initialize and await relese by sequencer.
-    //
-    // Note that the sleep is not necessary of RT service threads are created wtih 
-    // correct POSIX SCHED_FIFO priorities compared to non-RT priority of this main
-    // program.
-    //
-    // usleep(1000000);
  
     // Create Sequencer thread, which like a cyclic executive, is highest prio
     printf("Start sequencer\n");
     threadParams[0].sequencePeriods=capture_period; // run for x seconds 
 
-    // Sequencer = RT_MAX	@ 30 Hz
+    // Sequencer = RT_MAX	@ 100 Hz
     //
     rt_param[0].sched_priority=rt_max_prio;
     pthread_attr_setschedparam(&rt_sched_attr[0], &rt_param[0]);
@@ -273,7 +257,6 @@ void main(int argc, char **argv)
         perror("pthread_create for sequencer service 0");
     else
         printf("pthread_create successful for sequencer service 0\n");
-
 
    for(i=0;i<NUM_THREADS;i++)
        pthread_join(threads[i], NULL);
@@ -307,15 +290,18 @@ void *Sequencer(void *threadp)
 	double ave_jitter_one_hz = 0.0;
 	double wcet = 0;
     threadParams_t *threadParams = (threadParams_t *)threadp;
-
-    gettimeofday(&current_time_val, (struct timezone *)0);
+	
+	clock_gettime(CLOCK_REALTIME, &current_time_val);
+   // gettimeofday(&current_time_val, (struct timezone *)0);
+	
     syslog(LOG_CRIT, "Sequencer thread started @ sec=%lf, msec=%lf\n",(current_time_val.tv_sec-start_time_val.tv_sec), current_time_val.tv_usec/USEC_PER_MSEC);
     //printf("Sequencer thread started @ sec=%0.1lf, msec=%0.1lf\n", (current_time_val.tv_sec-start_time_val.tv_sec), current_time_val.tv_usec/USEC_PER_MSEC);
 
     do
     {
-        gettimeofday(&current_time_val, (struct timezone *)0);
-        syslog(LOG_CRIT, "Sequencer cycle %llu @ sec=%lf, msec=%lf\n", seqCnt, (current_time_val.tv_sec-start_time_val.tv_sec), current_time_val.tv_usec/USEC_PER_MSEC);
+        //gettimeofday(&current_time_val, (struct timezone *)0);
+		clock_gettime(CLOCK_REALTIME, &current_time_val);
+        syslog(LOG_CRIT, "Sequencer cycle %llu @ sec=%ld, msec=%ld\n", seqCnt, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
    
 		current_ex_start = current_time_val.tv_usec/USEC_PER_MSEC; //mS
 		delay_cnt=0; residual=0.0;
@@ -324,7 +310,7 @@ void *Sequencer(void *threadp)
         syslog(LOG_CRIT, "Sequencer thread prior to delay @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
         do
         {
-            rc=clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME,&delay_time, &remaining_time);
+            rc=clock_nanosleep(CLOCK_REALTIME, 0,&delay_time, NULL);
 
             if(rc == EINTR)
             { 
@@ -343,8 +329,9 @@ void *Sequencer(void *threadp)
         } while((residual > 0.0) && (delay_cnt < 100));
 
         seqCnt++;
- 
-	   gettimeofday(&prev_time_val, (struct timezone *)0);
+		
+		clock_gettime(CLOCK_REALTIME, &prev_time_val);
+	    //gettimeofday(&prev_time_val, (struct timezone *)0);
         //syslog(LOG_CRIT, "Sequencer release all sub-services @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
 		if(prev_time_val.tv_usec/USEC_PER_MSEC < current_ex_start)
 		{
@@ -366,9 +353,10 @@ void *Sequencer(void *threadp)
 		
 		if(delay_cnt > 1) printf("Sequencer looping delay %d\n", delay_cnt);
         // Release each service at a sub-rate of the generic sequencer rate
-        // Servcie_1 = RT_MAX-1	@ 10 Hz
-        //if((seqCnt % 12) == 0) sem_post(&semS1);@120HZ
-		if((seqCnt % 10) == 0) sem_post(&semS1);//@100HZ
+        
+		// Servcie_1 = RT_MAX-1	@ 10 Hz or 1 Hz
+		if((seqCnt % 10) == 0) sem_post(&semS1);//@10HZ
+		//if((seqCnt % 100) == 0) sem_post(&semS1);//@1HZ
 		
  
     } while(!abortTest && (seqCnt < threadParams->sequencePeriods));
@@ -377,21 +365,20 @@ void *Sequencer(void *threadp)
     abortS1=TRUE; abortS2=TRUE; 
     
 	syslog(LOG_CRIT, "Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-    printf("Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
+    //printf("Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
 	//syslog(LOG_CRIT, "Last number queued to W1 =%d\n", seq_sum);
 	//ave_execution = total_ex/1000;
 	//ave_jitter_ten_hz = ave_jitter_ten_hz/1000;
 	//ave_jitter_one_hz = ave_jitter_one_hz/1000;
 	//ave_jitter = ave_jitter/10000;
-	printf("Average execution with delay is = %f mS\n", ave_execution);
-	printf("Average sequencer execution is = %f uS\n", (ave_execution-10)*1000);
-	printf("WCET is = %0.1f mS\n", wcet);
+	syslog(LOG_CRIT,"Average execution with delay is = %f mS\n", ave_execution);
+	syslog(LOG_CRIT,"Average sequencer execution is = %f uS\n", (ave_execution-10)*1000);
+	syslog(LOG_CRIT,"WCET is = %0.1f mS\n", wcet);
 	//printf("Average Jitter for 10Hz is = %0.1f mS\n",ave_jitter_ten_hz);
 	//printf("Average Jitter for 1Hz is = %0.1f mS\n",ave_jitter_one_hz);
-	printf("Average Jitter for sequencer is = %0.1f mS\n",ave_jitter);
+	syslog(LOG_CRIT,"Average Jitter for sequencer is = %0.1f mS\n",ave_jitter);
     pthread_exit((void *)0);
 }
-
 
 void *Service_1(void *threadp)
 {
@@ -400,8 +387,9 @@ void *Service_1(void *threadp)
     unsigned long long S1Cnt=0;
     threadParams_t *threadParams = (threadParams_t *)threadp;
 
-    gettimeofday(&current_time_val, (struct timezone *)0);
-    syslog(LOG_CRIT, "10HZ W1 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
+	/* start frame time stamp */ 
+//	clock_gettime(CLOCK_REALTIME, &current_time_val);
+//   syslog(LOG_CRIT, "10HZ W1 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
     //printf("10HZ W1 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
 
     while(!abortS1)
@@ -413,14 +401,16 @@ void *Service_1(void *threadp)
 
 		/* start frames time stamp */ 
 	clock_gettime(CLOCK_REALTIME, &frame_start_time);
-	printf("Frame Capture start seconds = %ld, nanoseconds = %ld\n", \
+	syslog(LOG_CRIT,"Frame Capture start seconds = %ld, nanoseconds = %ld\n", \
     frame_start_time.tv_sec, frame_start_time.tv_nsec);	
 
-    mainloop();
-		
+    read_frame();
+	/*process_image(buffers[buf.index].start, buf.bytesused);
+       if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
+                    errno_exit("VIDIOC_QBUF");*/
 	/* End time stamp */
 	clock_gettime(CLOCK_REALTIME, &frame_stop_time);
-	printf("Frame Capture stop seconds = %ld, nanoseconds = %ld\n", \
+	syslog(LOG_CRIT,"Frame Capture stop seconds = %ld, nanoseconds = %ld\n", \
     frame_stop_time.tv_sec, frame_stop_time.tv_nsec);
 	
 	sec_time = (frame_stop_time.tv_sec - frame_start_time.tv_sec);
@@ -438,39 +428,17 @@ void *Service_1(void *threadp)
 		frame_ex_time_ms = ms_time/frame_count;
 	}
 
-	printf("Capture time per %d frames is = %0.lf S and %0.1f mS\n", frame_count, sec_time, nano_time_in_ms);
-	printf("Frame average execution time is = %0.1f mS.\n", frame_ex_time_ms);
-	printf("Average Jitter for 10Hz is = %0.1f mS\n",deadline_in_ms - frame_ex_time_ms);
-	printf("Average Jitter for 1Hz is = %0.1f mS\n",deadline_in_ms_one_hz - frame_ex_time_ms);
+	printf("Capture time per %d frames is = %0.lf S and %0.1f mS\n", captured_frames, sec_time, nano_time_in_ms);
+	captured_frames++;
+	syslog(LOG_CRIT,"Frame average execution time is = %0.1f mS.\n", frame_ex_time_ms);
+	syslog(LOG_CRIT,"Average Jitter for 10Hz is = %0.1f mS\n",deadline_in_ms - frame_ex_time_ms);
+	syslog(LOG_CRIT,"Average Jitter for 1Hz is = %0.1f mS\n",deadline_in_ms_one_hz - frame_ex_time_ms);
 
 /**********************************************************/
 
-        gettimeofday(&current_time_val, (struct timezone *)0);
-        syslog(LOG_CRIT, "10HZ W1 thread release %llu @ sec=%d, msec=%d\n", S1Cnt, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-    }
-
-    pthread_exit((void *)0);
-}
-
-
-void *Service_2(void *threadp)
-{
-    struct timeval current_time_val;
-    double current_time;
-    unsigned long long S2Cnt=0;
-    threadParams_t *threadParams = (threadParams_t *)threadp;
-
-    gettimeofday(&current_time_val, (struct timezone *)0);
-    syslog(LOG_CRIT, "1HZ W2 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-    //printf("1HZ W2 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-
-    while(!abortS2)
-    {
-        sem_wait(&semS2);
-        S2Cnt++;
-
-        gettimeofday(&current_time_val, (struct timezone *)0);
-        syslog(LOG_CRIT, "1HZ W2 release %llu @ sec=%d, msec=%d\n", S2Cnt, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
+        //gettimeofday(&current_time_val, (struct timezone *)0);
+        clock_gettime(CLOCK_REALTIME, &current_time_val);
+		syslog(LOG_CRIT, "10HZ W1 thread release %llu @ sec=%d, msec=%d\n", S1Cnt, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
     }
 
     pthread_exit((void *)0);

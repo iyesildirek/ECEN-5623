@@ -32,6 +32,7 @@ int              fd = -1;
 int              out_buf;
 int              force_format=1;
 int              frame_count = 1;
+int captured_frames = 0;
 
 unsigned int framecnt=0;
 unsigned char bigbuffer[(1280*960)];
@@ -234,67 +235,6 @@ int read_frame(void)
                     errno_exit("VIDIOC_QBUF");
 
     return 1;
-}
-
-void mainloop(void)
-{
-    unsigned int count;
-    struct timespec read_delay;
-    struct timespec time_error;
-
-    read_delay.tv_sec=0;
-    read_delay.tv_nsec=30000;
-
-    count = frame_count;
-
-    while (count > 0)
-    {
-        for (;;)
-        {
-            fd_set fds;
-            struct timeval tv;
-            int r;
-
-            FD_ZERO(&fds);
-            FD_SET(fd, &fds);
-
-            /* Timeout. */
-            tv.tv_sec = 2;
-            tv.tv_usec = 0;
-
-            r = select(fd + 1, &fds, NULL, NULL, &tv);
-
-            if (-1 == r)
-            {
-                if (EINTR == errno)
-                    continue;
-                errno_exit("select");
-            }
-
-            if (0 == r)
-            {
-                fprintf(stderr, "select timeout\n");
-                exit(EXIT_FAILURE);
-            }
-
-            if (read_frame())
-            {
-             /* Let sequencer take care of this.
-			 if(clocl_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME,&read_delay, &time_error) != 0)
-                    perror("nanosleep");
-             else
-                    printf("time_error.tv_sec=%ld, time_error.tv_nsec=%ld\n", time_error.tv_sec, time_error.tv_nsec);
-			*/
-                count--;
-                break;
-            }
-
-            /* EAGAIN - continue select loop unless count done. */
-            if(count <= 0) break;
-        }
-
-        if(count <= 0) break;
-    }
 }
 
 void start_capturing(void)

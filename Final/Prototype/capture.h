@@ -43,6 +43,7 @@ extern unsigned int     n_buffers;
 extern int              out_buf;
 extern int              force_format;
 extern int              frame_count;
+extern int 				captured_frames;
 
 extern unsigned int framecnt;
 extern unsigned char bigbuffer[(1280*960)];
@@ -55,6 +56,10 @@ typedef struct buffer
 
 extern buffer_t buffer;
 
+
+//extern struct v4l2_buffer buf;
+
+
 /* Function Prototypes */
 void errno_exit(const char *s);
 int xioctl(int fh, int request, void *arg);
@@ -63,7 +68,6 @@ void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time);
 void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b);
 void process_image(const void *p, int size);
 int read_frame(void);
-void mainloop(void);
 void start_capturing(void);
 void uninit_device(void);
 void init_read(unsigned int buffer_size);

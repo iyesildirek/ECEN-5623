@@ -20,10 +20,13 @@ all:	${PRODUCT}
 
 clean:
 	-rm -f *.o *.pgm *~ *.d *.ppm
-	-rm -f ${PRODUCT} ${GARBAGE} outputFile.txt
+	-rm -f ${PRODUCT} ${GARBAGE} outputFile.log
 
 seqgen:	seqgen.o capture.o
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ seqgen.o capture.o $(LIBS)
+
+test:
+		grep seqgen /var/log/syslog > outputFile.log
 
 depend:
 
