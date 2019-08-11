@@ -75,9 +75,12 @@
 #define ERROR (-1)
 #define NUM_THREADS (2+1)
 
+/* Enable for 10 Hz Frame Capture. Otherwise is 1 Hz*/
+//#define TEN_HZ (10) 
+
 int abortTest=FALSE;
-int abortS1=FALSE, abortS2=FALSE, abortS3=FALSE;
-sem_t semS1, semS2, semS3;
+int abortS1=FALSE;
+sem_t semS1;
 struct timeval start_time_val;
 
 /**************************************************
@@ -87,6 +90,12 @@ struct timeval start_time_val;
 **************************************************/
 unsigned long long capture_period = 1100;
 int capture_seq_period = 1100;
+
+#ifdef TEN_HZ
+	int freq = 10;
+#else
+	int freq = 1;
+#endif
 
 /*Time for each frame */
 static struct timespec frame_start_time = {0, 0};
@@ -101,7 +110,6 @@ typedef struct
 /* Function Prototypes */
 void *Sequencer(void *threadp);
 void *Service_1(void *threadp);
-void *Service_2(void *threadp);
 double getTimeMsec(void);
 void print_scheduler(void);
 /* End of Function Prototypes */
@@ -145,6 +153,7 @@ void main(int argc, char **argv)
     cpu_set_t allcpuset;
 	dev_name = "/dev/video0";
     printf("Starting Sequencer Demo\n");
+	/*Best effort time stamp*/
     gettimeofday(&start_time_val, (struct timezone *)0);
     gettimeofday(&current_time_val, (struct timezone *)0);
     syslog(LOG_CRIT, "Sequencer @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
@@ -162,8 +171,6 @@ void main(int argc, char **argv)
     // initialize the sequencer semaphores
     //
     if (sem_init (&semS1, 0, 0)) { printf ("Failed to initialize S1 semaphore\n"); exit (-1); }
-    if (sem_init (&semS2, 0, 0)) { printf ("Failed to initialize S2 semaphore\n"); exit (-1); }
-    if (sem_init (&semS3, 0, 0)) { printf ("Failed to initialize S3 semaphore\n"); exit (-1); }
 
     mainpid=getpid();
 
@@ -355,14 +362,16 @@ void *Sequencer(void *threadp)
         // Release each service at a sub-rate of the generic sequencer rate
         
 		// Servcie_1 = RT_MAX-1	@ 10 Hz or 1 Hz
+#ifdef TEN_HZ		
 		if((seqCnt % 10) == 0) sem_post(&semS1);//@10HZ
-		//if((seqCnt % 100) == 0) sem_post(&semS1);//@1HZ
-		
+#else
+		if((seqCnt % 100) == 0) sem_post(&semS1);//@1HZ
+#endif		
  
     } while(!abortTest && (seqCnt < threadParams->sequencePeriods));
 
-    sem_post(&semS1); sem_post(&semS2); 
-    abortS1=TRUE; abortS2=TRUE; 
+    sem_post(&semS1);
+    abortS1=TRUE; 
     
 	syslog(LOG_CRIT, "Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
     //printf("Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
@@ -401,8 +410,8 @@ void *Service_1(void *threadp)
 
 		/* start frames time stamp */ 
 	clock_gettime(CLOCK_REALTIME, &frame_start_time);
-	syslog(LOG_CRIT,"Frame Capture start seconds = %ld, nanoseconds = %ld\n", \
-    frame_start_time.tv_sec, frame_start_time.tv_nsec);	
+	syslog(LOG_CRIT,"Frame Capture start #%d seconds = %ld, nanoseconds = %ld\n", \
+    S1Cnt, frame_start_time.tv_sec, frame_start_time.tv_nsec);	
 
     read_frame();
 	/*process_image(buffers[buf.index].start, buf.bytesused);
@@ -410,8 +419,8 @@ void *Service_1(void *threadp)
                     errno_exit("VIDIOC_QBUF");*/
 	/* End time stamp */
 	clock_gettime(CLOCK_REALTIME, &frame_stop_time);
-	syslog(LOG_CRIT,"Frame Capture stop seconds = %ld, nanoseconds = %ld\n", \
-    frame_stop_time.tv_sec, frame_stop_time.tv_nsec);
+	syslog(LOG_CRIT,"Frame Capture stop #%d seconds = %ld, nanoseconds = %ld\n", \
+    S1Cnt, frame_stop_time.tv_sec, frame_stop_time.tv_nsec);
 	
 	sec_time = (frame_stop_time.tv_sec - frame_start_time.tv_sec);
 	if(frame_stop_time.tv_nsec < frame_start_time.tv_nsec)
@@ -438,7 +447,7 @@ void *Service_1(void *threadp)
 
         //gettimeofday(&current_time_val, (struct timezone *)0);
         clock_gettime(CLOCK_REALTIME, &current_time_val);
-		syslog(LOG_CRIT, "10HZ W1 thread release %llu @ sec=%d, msec=%d\n", S1Cnt, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
+		syslog(LOG_CRIT, "%dHZ Frame Capture thread release %llu @ sec=%d, msec=%d\n", freq, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
     }
 
     pthread_exit((void *)0);
