@@ -1020,9 +1020,9 @@ int inputCheck(void)
 			valid = 0;
 			printf("\nThis is the list of available parameters: \n");
 			printf("\thelp \n");
-			printf("\tgrayscale width height \n");
-			printf("\tbright input.ppm \n");
-			printf("\tsharp input.ppm output.ppm \n");
+			printf("\tgrayscale input.ppm width height \n");
+			printf("\tbright input.ppm width height\n");
+			printf("\tsharp input.ppm output.ppm width height\n");
 			printf("\texit \n");
 			printf("Enter a command: \r\n");
             return valid;
@@ -1044,6 +1044,7 @@ int inputCheck(void)
 						HRES = atoi(Token[1]);
 						VRES = atoi(Token[2]);
 						printf("Resolution is: %d x %d\n", HRES, VRES);
+						printf("Enter another command: \r\n");
 						return valid;
                     }
 				else 				
@@ -1051,6 +1052,7 @@ int inputCheck(void)
 					
 				}
 					printf("Release lock to grayscale thread");
+					printf("Enter another command: \r\n");
 					return 0;
 			}
 			
@@ -1070,6 +1072,7 @@ int inputCheck(void)
 					return valid;
 				}
 				printf("Release lock to bright thread");
+				printf("Enter another command: \r\n");
 				return 0;
 				}
 				
@@ -1087,15 +1090,18 @@ int inputCheck(void)
 					char *fileIn = Token[1];
 					char *fileOut = Token[2];
 					printf("File name is: %s and %s \n",fileIn , fileOut);
+					printf("Enter another command: \r\n");
 					return valid;
 				}
 			
 				printf("Release lock to sharp thread");
+				printf("Enter another command: \r\n");
 			}
 			else if (strcmp(Token[0], cmds[4]) == 0)             /*     exit()     */
 			{
 				valid = 1;
 				printf("\nNo transform performed\n\n");
+				printf("Enter another command: \r\n");
 			}
 			
 			else

@@ -342,8 +342,6 @@ void *Sequencer(void *threadp)
 {
     struct timeval current_time_val;
 	struct timeval prev_time_val;
-    //struct timespec delay_time = {0,8333333}; // delay for 8.33 msec, 120 Hz
-	//struct timespec delay_time = {0,50000000}; // delay for 50.00 msec, 20 Hz
 	struct timespec delay_time = {0,10000000}; // delay for 10.00 msec, 100 Hz
     struct timespec remaining_time;
     double current_time;

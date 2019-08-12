@@ -166,7 +166,7 @@ void end_delay_test(void)
 
 }
 
-//#define RUN_RT_THREAD
+#define RUN_RT_THREAD
 
 void main(void)
 {
