@@ -32,7 +32,12 @@ log:
 test:  
 	uname -a > uname.txt
 	sudo ./time_lapse < uname.txt
-	
+
+video:  
+#@ 1 frame in and 1 frame out (1FPS)
+	ffmpeg -r 1 -i "test0000%04d.ppm" record.mp4 -r 1
+# For 10FPS = ffmpeg -r 10 -i "test0000%04d.ppm" record.mp4 -r 1	
+
 depend:
 
 .c.o:

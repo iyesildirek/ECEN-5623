@@ -2,6 +2,14 @@
 #include "capture.h"
 #include "time_lapse.h"
 
+char header_ppm[88] = "........................................................................................";
+/**************************************************
+* To set test duration of 110 seconds for 
+* - 100 frames @ 10Hz or 
+* - 10 frames @ 1 Hz
+**************************************************/
+int minutes = 6;
+
 void main(int argc, char **argv)
 {
     struct timeval current_time_val;
@@ -17,16 +25,22 @@ void main(int argc, char **argv)
     pid_t mainpid;
     cpu_set_t allcpuset;
 	dev_name = "/dev/video0";
-	//Delay to allow uname.txt to write
-	//clock_nanosleep(CLOCK_REALTIME, 0,&camera_start_time, NULL);
-	/************************************************************************/
+
+	/******* set duration **********/
+	unsigned long long capture_period = 100*60*minutes;
+	int capture_seq_period = 100*60*minutes;
+	/******************************/
+
+
+	/************************ Host Information Input *****************************/
     printf("Enter a command:\n");
     char userInput[50] = {}, temp;      /* Array to store input command line string */
     fflush(stdin);                 /* Flushing keyboard buffer from previous input*/
     strcpy(userInput," ");         /* Reseting userInput string array*/
     scanf("%[^\n]", userInput);	/* Accepting user Input*/
     scanf("%c", &temp);            /* Flushing '\n' character from the stdin buffer after user hit the 'Enter' */
-	printf("%s\n",userInput);
+	strcpy(header_ppm,userInput);
+	printf("%s\n",header_ppm);
 	/************************************************************************/
 	
     printf("Starting Sequencer\n");
@@ -283,7 +297,7 @@ void *Service_1(void *threadp)
 	syslog(LOG_CRIT,"Frame Capture start #%d seconds = %ld, nanoseconds = %ld\n", \
     S1Cnt, frame_start_time.tv_sec, frame_start_time.tv_nsec);	
 
-    read_frame();
+    read_frame(header_ppm);
 	/*process_image(buffers[buf.index].start, buf.bytesused);
        if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                     errno_exit("VIDIOC_QBUF");*/
@@ -307,7 +321,7 @@ void *Service_1(void *threadp)
 		frame_ex_time_ms = ms_time/frame_count;
 	}
 
-	printf("Capture time per %d frames is = %0.lf S and %0.1f mS\n", captured_frames, sec_time, nano_time_in_ms);
+	syslog(LOG_CRIT,"Capture time per %d frames is = %0.lf S and %0.1f mS\n", captured_frames, sec_time, nano_time_in_ms);
 	captured_frames++;
 	syslog(LOG_CRIT,"Frame average execution time is = %0.1f mS.\n", frame_ex_time_ms);
 	syslog(LOG_CRIT,"Average Jitter for 10Hz is = %0.1f mS\n",deadline_in_ms - frame_ex_time_ms);

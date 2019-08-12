@@ -56,18 +56,16 @@ typedef struct buffer
 
 extern buffer_t buffer;
 
-
 //extern struct v4l2_buffer buf;
-
 
 /* Function Prototypes */
 void errno_exit(const char *s);
 int xioctl(int fh, int request, void *arg);
-void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time);
+void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time, char* host);
 void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time);
 void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b);
-void process_image(const void *p, int size);
-int read_frame(void);
+void process_image(const void *p, int size, char* host);
+int read_frame(char* host);
 void start_capturing(void);
 void uninit_device(void);
 void init_read(unsigned int buffer_size);

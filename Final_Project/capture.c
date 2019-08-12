@@ -20,7 +20,10 @@
 
  char ppm_header[]="P6\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
  char ppm_dumpname[]="test00000000.ppm";
- char pgm_header[]="P1\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
+ //
+                                              //29
+ char pgm_header[]="P5\n#9999999999 sec 9999999999 msec \n"HRES_STR" \
+ "VRES_STR"\n255\n\n#Linux raspberrypi 4.19.57-v7+ #1244 SMP Thu Jul 4 18:45:25 BST 2019 armv7l GNU/Linux \n";
  char pgm_dumpname[]="test00000000.ppm";
 
  char *dev_name = "/dev/video0";
@@ -36,7 +39,6 @@ int captured_frames = 0;
 
 unsigned int framecnt=0;
 unsigned char bigbuffer[(1280*960)];
-
 buffer_t buffer;
 	
 void errno_exit(const char *s)
@@ -58,30 +60,38 @@ int xioctl(int fh, int request, void *arg)
         return r;
 }
 
-void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
+void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time, char* host)
 {
-    int written, i, total, dumpfd;
-
+    int written, i, total, dumpfd, temp;
+	char uname[95];
+	char *insert = "\n#";
+	/* Name Formatting */
     snprintf(&ppm_dumpname[4], 9, "%08d", tag);
     strncat(&ppm_dumpname[12], ".ppm", 5);
     dumpfd = open(ppm_dumpname, O_WRONLY | O_NONBLOCK | O_CREAT, 00666);
-
+	
+	/* Image Header Formatting */
     snprintf(&ppm_header[4], 11, "%010d", (int)time->tv_sec);
     strncat(&ppm_header[14], " sec ", 5);
     snprintf(&ppm_header[19], 11, "%010d", (int)((time->tv_nsec)/1000000));
     strncat(&ppm_header[29], " msec \n"HRES_STR" "VRES_STR"\n255\n", 19);
-    written=write(dumpfd, ppm_header, sizeof(ppm_header));
-
+	written=write(dumpfd, ppm_header, sizeof(ppm_header));
     total=0;
 
+	/***************************************
+	* Write Host data
+	* uname -a has 88 char
+	**************************************/
+	strcat(uname, insert);
+	strcat(uname, host);
+	temp = write(dumpfd, uname, sizeof(uname));
+
+	/*Write data buffer*/
     do
     {
-        written=write(dumpfd, p, size);
+        written=write(dumpfd, p, size+sizeof(temp));
         total+=written;
     } while(total < size);
-
-   //printf("wrote %d bytes\n", total);
-
     close(dumpfd);
 
 }
@@ -140,7 +150,7 @@ void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned c
    *b = b1 ;
 }
 
-void process_image(const void *p, int size)
+void process_image(const void *p, int size, char* host)
 {
     int i, newi, newsize=0;
     struct timespec frame_time;
@@ -151,7 +161,7 @@ void process_image(const void *p, int size)
     clock_gettime(CLOCK_REALTIME, &frame_time);    
 
     framecnt++;
-    printf("frame %d: ", framecnt);
+  //  printf("frame %d: ", framecnt);
 
     // This just dumps the frame to a file now, but you could replace with whatever image
     // processing you wish.
@@ -160,7 +170,7 @@ void process_image(const void *p, int size)
     if(fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YUYV)
     {
 #if defined(COLOR_CONVERT)
-        printf("Dump YUYV converted to RGB size %d\n", size);
+  //      printf("Dump YUYV converted to RGB size %d\n", size);
 
         // Pixels are YU and YV alternating, so YUYV which is 4 bytes
         // We want RGB, so RGBRGB which is 6 bytes
@@ -171,8 +181,7 @@ void process_image(const void *p, int size)
             yuv2rgb(y_temp, u_temp, v_temp, &bigbuffer[newi], &bigbuffer[newi+1], &bigbuffer[newi+2]);
             yuv2rgb(y2_temp, u_temp, v_temp, &bigbuffer[newi+3], &bigbuffer[newi+4], &bigbuffer[newi+5]);
         }
-
-        dump_ppm(bigbuffer, ((size*6)/4), framecnt, &frame_time);
+        dump_ppm(bigbuffer, ((size*6)/4), framecnt, &frame_time, host);
 #else
         printf("Dump YUYV converted to YY size %d\n", size);
 
@@ -200,7 +209,7 @@ void process_image(const void *p, int size)
     fflush(stdout);
 }
 
-int read_frame(void)
+int read_frame(char* host)
 {
     struct v4l2_buffer buf;
     unsigned int i;
@@ -230,7 +239,7 @@ int read_frame(void)
             }
 
             assert(buf.index < n_buffers);
-            process_image(buffers[buf.index].start, buf.bytesused);
+            process_image(buffers[buf.index].start, buf.bytesused, host);
             if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                     errno_exit("VIDIOC_QBUF");
 
@@ -547,29 +556,3 @@ void stop_capturing(void)
                 break;
         }
 }
-
-/*
-int main(int argc, char **argv)
-{
-        dev_name = "/dev/video0";
-    for (;;)
-    {
-        int idx;
-        int c;
-        c = getopt_long(argc, argv,
-                    short_options, long_options, &idx);
-        if (-1 == c)
-            break;
-        usage(stderr, argc, argv);
-        exit(EXIT_FAILURE);
-    }
-    open_device();
-    init_device();
-    start_capturing();
-    mainloop();
-    uninit_device();
-    close_device();
-    fprintf(stderr, "\n");
-    return 0;
-}
-*/

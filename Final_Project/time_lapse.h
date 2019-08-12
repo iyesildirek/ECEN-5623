@@ -41,6 +41,7 @@
 * $ sudo ./a.out
 * Trace by: 
 * $ grep a.out /var/log/syslog > outputfile.log
+* ffmpeg -r 1 -i "test0000%04d.ppm" record.mp4 -r 1
 */
 
 #include <stdio.h>
@@ -84,8 +85,9 @@ struct timeval start_time_val;
 * - 100 frames @ 10Hz or 
 * - 10 frames @ 1 Hz
 **************************************************/
-unsigned long long capture_period = 1100;
-int capture_seq_period = 1100;
+extern int minutes;
+unsigned long long capture_period; 
+int capture_seq_period;
 
 #ifdef TEN_HZ
 	int freq = 10;
@@ -125,6 +127,8 @@ long_options[] = {
         { "count",  required_argument, NULL, 'c' },
         { 0, 0, 0, 0 }
 };
+
+extern char header_ppm[88]; 
 
 /* Function Prototypes */
 void *Sequencer(void *threadp);
