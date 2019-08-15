@@ -39,7 +39,7 @@ int captured_frames = 0;
 unsigned int framecnt=0;
 unsigned char bigbuffer[(1280*960)];
 buffer_t buffer;
-	
+camera_buffer_t ram_buff;	
 void errno_exit(const char *s)
 {
         fprintf(stderr, "%s error %d, %s\n", s, errno, strerror(errno));
@@ -154,8 +154,9 @@ void process_image(const void *p, int size, char* host)
     int i, newi, newsize=0;
     struct timespec frame_time;
     int y_temp, y2_temp, u_temp, v_temp;
-    unsigned char *pptr = (unsigned char *)p;
-
+	
+	unsigned char *pptr = (unsigned char *)p; 
+	
     // record when process was called
     clock_gettime(CLOCK_REALTIME, &frame_time);    
 
@@ -238,7 +239,14 @@ int read_frame(char* host)
             }
 
             assert(buf.index < n_buffers);
-            process_image(buffers[buf.index].start, buf.bytesused, host);
+            
+			// Remove process to main loop and start on frame +15 or +7
+			// for 10 Hz or 1 Hz, respectively. 	
+			ram_buff.start = buffers[buf.index].start;
+			ram_buff.length = buf.bytesused;
+			ram_buff.host = host;
+			//process_image(buffers[buf.index].start, buf.bytesused, host);
+			process_image(ram_buff.start, ram_buff.length, ram_buff.host);
             if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                     errno_exit("VIDIOC_QBUF");
 

@@ -9,7 +9,7 @@ char header_ppm[88] = ".........................................................
 * - 10 frames @ 1 Hz
 **************************************************/
 
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
     struct timeval current_time_val;
     int i, rc, scope;
@@ -26,19 +26,31 @@ void main(int argc, char **argv)
 	dev_name = "/dev/video0";
 
 	/******* set duration **********/
-	unsigned long long capture_period = 100*60*DURATION_MIN;
-	int capture_seq_period = 100*60*DURATION_MIN;
-	/******************************/
-
-
+#ifdef TEN_HZ
+// ensure 15 frames are captured for camera calibration and frame removal
+	unsigned long long capture_period = 100*60*DURATION_MIN+160;
+#else
+// ensure 8 frames are captured for camera calibration and frame removal
+	unsigned long long capture_period = 100*60*DURATION_MIN+900;
+#endif	
 	/************************ Host Information Input *****************************/
-    printf("Enter a command:\n");
-    char userInput[50] = {}, temp;      /* Array to store input command line string */
-    fflush(stdin);                 /* Flushing keyboard buffer from previous input*/
-    strcpy(userInput," ");         /* Reseting userInput string array*/
-    scanf("%[^\n]", userInput);	/* Accepting user Input*/
-    scanf("%c", &temp);            /* Flushing '\n' character from the stdin buffer after user hit the 'Enter' */
-	strcpy(header_ppm,userInput);
+	struct utsname unameData;
+	uname(&unameData);
+	char userIn[50] = {};
+	fflush(stdin);
+	strcat(userIn,unameData.sysname);
+	strcat(userIn," ");
+	strcat(userIn,unameData.nodename);
+	strcat(userIn," ");
+	strcat(userIn,unameData.release);
+	strcat(userIn," ");
+	strcat(userIn,unameData.version);
+	strcat(userIn," ");
+	strcat(userIn,unameData.machine);
+	strcat(userIn," ");
+	strcat(userIn,unameData.domainname);
+	printf("%s", userIn);
+	strcpy(header_ppm,userIn);
 	printf("%s\n",header_ppm);
 	/************************************************************************/
 	
@@ -68,7 +80,7 @@ void main(int argc, char **argv)
     print_scheduler();
 
 /************************* Get camera ready prior to threads*************************/
-	struct timespec camera_start_time = {0,10000000000}; // delay for 1s
+	struct timespec camera_start_time = {0,(long int)10000000000}; // delay for 0.9s
     
     for (;;)
     {
@@ -150,7 +162,7 @@ void main(int argc, char **argv)
 
    for(i=0;i<NUM_THREADS;i++)
        pthread_join(threads[i], NULL);
-
+	printf("All frames Captured\n");
 	/*** After completion Close camera ****/
     stop_capturing();
     uninit_device();
@@ -166,10 +178,9 @@ void *Sequencer(void *threadp)
 	struct timeval prev_time_val;
 	struct timespec delay_time = {0,10000000}; // delay for 10.00 msec, 100 Hz
     struct timespec remaining_time;
-    double current_time;
+    //double current_time;
     double residual;
     int rc, delay_cnt=0;
-	int seq_sum = capture_seq_period; // run for x seconds (seq_sum/freq)
     unsigned long long seqCnt=0;
 	double ave_jitter = 0.0;
 	double current_ex_start = 0.0;
@@ -255,10 +266,8 @@ void *Sequencer(void *threadp)
 
     sem_post(&semS1);
     abortS1=TRUE; 
-    
 	syslog(LOG_CRIT, "Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
     //printf("Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-	//syslog(LOG_CRIT, "Last number queued to W1 =%d\n", seq_sum);
 	//ave_execution = total_ex/1000;
 	//ave_jitter_ten_hz = ave_jitter_ten_hz/1000;
 	//ave_jitter_one_hz = ave_jitter_one_hz/1000;
@@ -275,7 +284,7 @@ void *Sequencer(void *threadp)
 void *Service_1(void *threadp)
 {
     struct timeval current_time_val;
-    double current_time;
+    //double current_time;
     unsigned long long S1Cnt=0;
     threadParams_t *threadParams = (threadParams_t *)threadp;
 
@@ -330,7 +339,7 @@ void *Service_1(void *threadp)
 
         //gettimeofday(&current_time_val, (struct timezone *)0);
         clock_gettime(CLOCK_REALTIME, &current_time_val);
-		syslog(LOG_CRIT, "%dHZ Frame Capture thread release %llu @ sec=%d, msec=%d\n", freq, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
+		syslog(LOG_CRIT, "%dHZ Frame Capture thread release %llu @ sec=%d, msec=%d\n", freq, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)(current_time_val.tv_usec)/USEC_PER_MSEC);
     }
 
     pthread_exit((void *)0);

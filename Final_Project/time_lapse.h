@@ -59,6 +59,8 @@
 #include <sched.h>
 #include <semaphore.h>
 #include <syslog.h>
+#include <sys/utsname.h>
+#include <sys/sysinfo.h>
 
 #define USEC_PER_MSEC (1000)
 #define NANOSEC_PER_SEC (1000000000)
@@ -70,7 +72,7 @@
 
 /* Enable for 10 Hz Frame Capture. Otherwise is 1 Hz*/
 //#define TEN_HZ (10) 
-#define DURATION_MIN (31) //set # of minutes to takes frames
+#define DURATION_MIN (1) //set # of minutes to takes frames
 
 int abortTest=FALSE;
 int abortS1=FALSE;
@@ -111,8 +113,8 @@ typedef struct
 	double deadline_in_ms_one_hz = 1000; //1Hz
 	double frame_ex_time_ms = 0;
 	
-extern const char short_options[] = "d:hmruofc:";
-extern const struct option
+const char short_options[] = "d:hmruofc:";
+const struct option
 long_options[] = {
         { "device", required_argument, NULL, 'd' },
         { "help",   no_argument,       NULL, 'h' },

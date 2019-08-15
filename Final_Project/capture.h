@@ -56,6 +56,17 @@ typedef struct buffer
 
 extern buffer_t buffer;
 
+/* Typedef for RAM Buffer*/
+typedef struct camera_buffer 
+{
+        buffer_t buffer; 
+		void   *start;
+        size_t  length;
+		char * host;
+}camera_buffer_t;
+
+extern camera_buffer_t ram_buff; //max number of frames
+
 /* Function Prototypes */
 void errno_exit(const char *s);
 int xioctl(int fh, int request, void *arg);
