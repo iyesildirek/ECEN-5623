@@ -20,16 +20,12 @@
 //
 // Sequencer - 120 Hz 
 //                   [gives semaphores to all other services]
-// Service_1 - 10 Hz  , every 10th Sequencer loop
+// Frame Capture - 10 Hz  , every 10th Sequencer loop
 //                   [buffers 3 images per second]
-// Service_2 - 1 Hz  , every 30th Sequencer loop 
-//                   [time-stamp middle sample image with cvPutText or header]
-//
 // With the above, priorities by RM policy would be:
 //
 // Sequencer = RT_MAX	@ 120 Hz
-// Servcie_1 = RT_MAX-1	@ 10 Hz
-// Service_2 = RT_MAX-2	@ 1 Hz
+// Servcie_1 = RT_MAX-1	@ 10 Hz or 1 Hz
 //
 // This is necessary for CPU affinity macros in Linux
 */
@@ -74,6 +70,7 @@
 
 /* Enable for 10 Hz Frame Capture. Otherwise is 1 Hz*/
 //#define TEN_HZ (10) 
+#define DURATION_MIN (31) //set # of minutes to takes frames
 
 int abortTest=FALSE;
 int abortS1=FALSE;

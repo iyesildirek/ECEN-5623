@@ -20,7 +20,6 @@
 
  char ppm_header[]="P6\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
  char ppm_dumpname[]="test00000000.ppm";
- //
                                               //29
  char pgm_header[]="P5\n#9999999999 sec 9999999999 msec \n"HRES_STR" \
  "VRES_STR"\n255\n\n#Linux raspberrypi 4.19.57-v7+ #1244 SMP Thu Jul 4 18:45:25 BST 2019 armv7l GNU/Linux \n";

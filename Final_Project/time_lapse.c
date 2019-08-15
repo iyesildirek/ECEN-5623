@@ -8,7 +8,6 @@ char header_ppm[88] = ".........................................................
 * - 100 frames @ 10Hz or 
 * - 10 frames @ 1 Hz
 **************************************************/
-int minutes = 6;
 
 void main(int argc, char **argv)
 {
@@ -27,8 +26,8 @@ void main(int argc, char **argv)
 	dev_name = "/dev/video0";
 
 	/******* set duration **********/
-	unsigned long long capture_period = 100*60*minutes;
-	int capture_seq_period = 100*60*minutes;
+	unsigned long long capture_period = 100*60*DURATION_MIN;
+	int capture_seq_period = 100*60*DURATION_MIN;
 	/******************************/
 
 

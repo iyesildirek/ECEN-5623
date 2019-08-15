@@ -56,8 +56,6 @@ typedef struct buffer
 
 extern buffer_t buffer;
 
-//extern struct v4l2_buffer buf;
-
 /* Function Prototypes */
 void errno_exit(const char *s);
 int xioctl(int fh, int request, void *arg);
