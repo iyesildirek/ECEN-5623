@@ -214,7 +214,9 @@ void process_image(const void *p, int size, char* host)
 int read_frame( int index)
 {
     struct v4l2_buffer buf;
-
+	int read_buff_flag = 0;
+	int temp = 0;
+	int counter = 0;
             CLEAR(buf);
             buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
             buf.memory = V4L2_MEMORY_MMAP;
@@ -238,14 +240,14 @@ int read_frame( int index)
                         errno_exit("VIDIOC_DQBUF");
                 }
             }
-
             assert(buf.index < n_buffers);
-            
+
 			// Remove process to main loop and start on frame +15 or +7
 			// for 10 Hz or 1 Hz, respectively. 	
-			ram_buff_2[index].start = buffers[buf.index].start;
-			ram_buff_2[index].length = buf.bytesused;
-			printf("Count is: %d and index is %d\n", frame_read,index);
+			ram_buff_2[index-1].start = buffers[buf.index].start;
+			ram_buff_2[index-1].length = buf.bytesused;
+			//process_image(ram_buff_2[frame_read].start, ram_buff_2[frame_read].length, "host");
+			//printf("Frame read is: %d and index is %d\n", frame_read,index-1);
 			frame_read ++;
             if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                     errno_exit("VIDIOC_QBUF");
@@ -325,7 +327,7 @@ void init_mmap(void)
         }
 
 /**/
-        ram_buff_2 = calloc(2000, sizeof(*ram_buff_2));
+        ram_buff_2 = calloc(2000, sizeof(*buffers));
         if (!ram_buff_2) 
         {
                 fprintf(stderr, "Out of memory\n");

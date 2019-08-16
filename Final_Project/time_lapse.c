@@ -166,8 +166,8 @@ int main(int argc, char **argv)
 	printf("All frames Captured\n");	
 	/*** After completion Close camera ****/
 	
-	for (int index = 0; index <68; index++)
-	process_image(ram_buff_2[index].start, ram_buff_2[index].length, header_ppm);
+	for (int index = 7; index <68; index++)
+	//process_image(ram_buff_2[index].start, ram_buff_2[index].length, header_ppm);
 	
     stop_capturing();
     uninit_device();
@@ -291,6 +291,7 @@ void *Service_1(void *threadp)
     struct timeval current_time_val;
     //double current_time;
     unsigned long long S1Cnt=0;
+	int read_index = 0;
     threadParams_t *threadParams = (threadParams_t *)threadp;
 
 	/* start frame time stamp */ 
@@ -310,8 +311,11 @@ void *Service_1(void *threadp)
 	syslog(LOG_CRIT,"Frame Capture start #%d seconds = %ld, nanoseconds = %ld\n", \
     S1Cnt, frame_start_time.tv_sec, frame_start_time.tv_nsec);	
 
-    read_frame(S1Cnt);	
-	//process_image(ram_buff_2[S1Cnt].start, ram_buff_2[S1Cnt].length, header_ppm);
+    read_frame(read_index);	
+	printf("read index is: %d\n",read_index);
+	process_image(ram_buff_2[read_index].start, ram_buff_2[read_index].length, header_ppm);
+	read_index++;
+	//process_image(ram_buff_2[0].start, ram_buff_2[0].length, "host");
 	
 	/* End time stamp */
 	clock_gettime(CLOCK_REALTIME, &frame_stop_time);
