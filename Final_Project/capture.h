@@ -60,9 +60,6 @@ extern buffer_t buffer;
 /* Typedef for RAM Buffer*/
 typedef struct camera_buffer 
 {
-        buffer_t buffer[2000]; 
-		//void   *start;
-        //size_t  length;
 		char * host;
 		int index;
 }camera_buffer_t;
@@ -76,7 +73,7 @@ void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time, 
 void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time);
 void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b);
 void process_image(const void *p, int size, char* host);
-camera_buffer_t read_frame(char* host, int index);
+int read_frame(int index);
 void start_capturing(void);
 void uninit_device(void);
 void init_mmap(void);

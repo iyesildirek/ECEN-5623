@@ -211,7 +211,7 @@ void process_image(const void *p, int size, char* host)
     fflush(stdout);
 }
 
-camera_buffer_t read_frame(char* host, int index)
+int read_frame( int index)
 {
     struct v4l2_buffer buf;
 
@@ -224,13 +224,13 @@ camera_buffer_t read_frame(char* host, int index)
                 switch (errno)
                 {
                     case EAGAIN:
-                       // return 0;
+                        return 0;
 
                     case EIO:
                         /* Could ignore EIO, but drivers should only set for serious errors, although some set for
                            non-fatal errors too.
                          */
-                      //  return 0;
+                        return 0;
 
 
                     default:
@@ -244,17 +244,12 @@ camera_buffer_t read_frame(char* host, int index)
 			// Remove process to main loop and start on frame +15 or +7
 			// for 10 Hz or 1 Hz, respectively. 	
 			ram_buff_2[index].start = buffers[buf.index].start;
-			ram_buff.buffer[0].length = buf.bytesused;
-			ram_buff.host = host;
-			ram_buff.index = buf.index;
-			 
-			printf("Count is: %d and index is %d\n", frame_read,ram_buff.index);
+			ram_buff_2[index].length = buf.bytesused;
+			printf("Count is: %d and index is %d\n", frame_read,index);
 			frame_read ++;
-			//process_image(buffers[buf.index].start, buf.bytesused, host);
-			//process_image(ram_buff_2[index].start, ram_buff.buffer[0].length, ram_buff.host);
             if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                     errno_exit("VIDIOC_QBUF");
-    return ram_buff;
+    return 1;
 }
 
 void start_capturing(void)

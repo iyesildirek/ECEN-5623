@@ -68,7 +68,7 @@
 #define TRUE (1)
 #define FALSE (0)
 #define ERROR (-1)
-#define NUM_THREADS (2+1)
+#define NUM_THREADS (1+1)
 
 /* Enable for 10 Hz Frame Capture. Otherwise is 1 Hz*/
 //#define TEN_HZ (10) 

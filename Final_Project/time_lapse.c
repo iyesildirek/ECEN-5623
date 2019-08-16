@@ -159,11 +159,16 @@ int main(int argc, char **argv)
         perror("pthread_create for sequencer service 0");
     else
         printf("pthread_create successful for sequencer service 0\n");
-
+	
    for(i=0;i<NUM_THREADS;i++)
        pthread_join(threads[i], NULL);
-	printf("All frames Captured\n");
+	
+	printf("All frames Captured\n");	
 	/*** After completion Close camera ****/
+	
+	for (int index = 0; index <68; index++)
+	process_image(ram_buff_2[index].start, ram_buff_2[index].length, header_ppm);
+	
     stop_capturing();
     uninit_device();
     close_device();
@@ -305,9 +310,8 @@ void *Service_1(void *threadp)
 	syslog(LOG_CRIT,"Frame Capture start #%d seconds = %ld, nanoseconds = %ld\n", \
     S1Cnt, frame_start_time.tv_sec, frame_start_time.tv_nsec);	
 
-    ram_buff_rx = read_frame(header_ppm,S1Cnt);	
-	process_image(ram_buff_2[S1Cnt].start, ram_buff.buffer[0].length, ram_buff.host);
-	//process_image(ram_buff.buffer[S1Cnt].start, ram_buff.buffer[S1Cnt].length, ram_buff.host);
+    read_frame(S1Cnt);	
+	//process_image(ram_buff_2[S1Cnt].start, ram_buff_2[S1Cnt].length, header_ppm);
 	
 	/* End time stamp */
 	clock_gettime(CLOCK_REALTIME, &frame_stop_time);
