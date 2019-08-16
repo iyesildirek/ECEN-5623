@@ -168,9 +168,11 @@ int main(int argc, char **argv)
 	printf("All frames Captured\n");	
 	/*** After completion Close camera ****/
 	
-	for (int index = 7; index <68; index++)
+	for (int index = 7; index <28; index++)
 	//process_image(ram_buff_2[index].start, ram_buff_2[index].length, header_ppm);
-	process_image(write_buff[index], ram_buff_2->length, header_ppm);
+	//process_image(write_buff[index], ram_buff_2->length, header_ppm);
+	//process_image(ram_buff_2->start, ram_buff_2->length, header_ppm);
+	process_image(ram_buff_2[index].start, ram_buff_2[index].length, header_ppm); //only captures last
     stop_capturing();
     uninit_device();
     close_device();
@@ -315,7 +317,7 @@ void *Service_1(void *threadp)
     read_frame(read_index);	
 	//write_buff[read_index]->start = ram_buff_2->start;
 	//printf("read index is: %d\n",read_index);
-	process_image(ram_buff_2->start, ram_buff_2->length, header_ppm);
+	//process_image(ram_buff_2->start, ram_buff_2->length, header_ppm);
 	
 	read_index++;
 /****************************************************************************************/
