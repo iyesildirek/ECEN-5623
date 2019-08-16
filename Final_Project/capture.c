@@ -37,7 +37,8 @@ int              force_format=1;
 int              frame_count = 1;
 int captured_frames = 0;
 int frame_read = 0;
-
+void **pBuffers;
+void **pLength;
 unsigned int framecnt=0;
 unsigned char bigbuffer[(1280*960)];
 buffer_t buffer;
@@ -246,9 +247,13 @@ int read_frame(int index)
 			// for 10 Hz or 1 Hz, respectively. 	
 			ram_buff_2[frame_read].start = buffers[buf.index].start;
 			ram_buff_2[frame_read].length = buf.bytesused;
-			
+			//printf("Buffer size is: %d\n",sizeof(buffers[buf.index].start));
 			//process_image(ram_buff_2[frame_read].start, ram_buff_2[frame_read].length, "host");
-			printf("Frame read is: %d and index is %d\n", frame_read,index);
+			
+			//pBuffers[frame_read] = ram_buff_2[frame_read].start;
+			//pLength[frame_read] = ram_buff_2[frame_read].length;
+			//process_image(pBuffers[frame_read], pLength[frame_read], "host");
+			//printf("Frame read is: %d and index is %d\n", frame_read,index);
 			//printf("%s\n", ram_buff_2[frame_read].start);
 			frame_read ++;
             if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))

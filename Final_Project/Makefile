@@ -3,8 +3,8 @@ LIB_DIRS =
 CC=gcc
 
 CDEFS= 
-CFLAGS= -O0 -g $(INCLUDE_DIRS) $(CDEFS) -Wall
-# -Werror 
+CFLAGS= -O0 -g $(INCLUDE_DIRS) $(CDEFS) -Wall 
+#  -Werror
 
 LIBS= -lpthread -lrt
 

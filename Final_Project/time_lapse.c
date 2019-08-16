@@ -2,7 +2,7 @@
 #include "capture.h"
 #include "time_lapse.h"
 
-struct buffer *write_buff[2000];
+//struct buffer *write_buff[2000];
 char header_ppm[88] = "........................................................................................";
 /**************************************************
 * To set test duration of 110 seconds for 
@@ -10,9 +10,20 @@ char header_ppm[88] = ".........................................................
 * - 10 frames @ 1 Hz
 **************************************************/
 
+#define BUFFERS 2000       /* number of buffers       */
+
+		struct example {
+		void * pData;
+		int pNum[2];
+		};
+		struct example *test;
+		
 int main(int argc, char **argv)
 {
-    struct timeval current_time_val;
+ 
+	test = (struct example *)malloc(sizeof(struct example));
+	
+	struct timeval current_time_val;
     int i, rc, scope;
     cpu_set_t threadcpu;
     pthread_t threads[NUM_THREADS];
@@ -32,8 +43,7 @@ int main(int argc, char **argv)
 	unsigned long long capture_period = 100*60*DURATION_MIN+160;
 #else
 // ensure 8 frames are captured for camera calibration and frame removal
-	//unsigned long long capture_period = 100*60*DURATION_MIN+900;
-	unsigned long long capture_period = 100*20*DURATION_MIN+900;
+	unsigned long long capture_period = 100*60*DURATION_MIN+900;
 #endif	
 	/************************ Host Information Input *****************************/
 	struct utsname unameData;
@@ -55,6 +65,17 @@ int main(int argc, char **argv)
 	strcpy(header_ppm,userIn);
 	printf("%s\n",header_ppm);
 	/************************************************************************/
+	
+	/******************************* Write Buffer *************************************/
+	pBuffers = (void**)calloc (BUFFERS, sizeof(struct buffer)); //make array of arrays
+	pLength = (void**)calloc (BUFFERS, sizeof(int)); //make array of arrays
+	int j;
+	for (j = 0; j < BUFFERS; j++) 
+	{
+	pBuffers[j] = (void*)calloc(4, sizeof(struct buffer)); // make actual arrays
+	pLength[j] = (void*)calloc(4, sizeof(int)); // make actual arrays
+	}
+	/*****************************************************************************/
 	
     printf("Starting Sequencer\n");
 	/*Best effort time stamp*/
@@ -162,18 +183,26 @@ int main(int argc, char **argv)
     else
         printf("pthread_create successful for sequencer service 0\n");
 	
+	process_image((test)->pData, (test)->pNum[0], header_ppm); //it works..
+	
    for(i=0;i<NUM_THREADS;i++)
        pthread_join(threads[i], NULL);
 	
 	printf("All frames Captured\n");	
 	/*** After completion Close camera ****/
 	
-	for (int index = 7; index <28; index++)
+	//for (int index = 28; index >7; index--)
 	//process_image(ram_buff_2[index].start, ram_buff_2[index].length, header_ppm);
 	//process_image(write_buff[index], ram_buff_2->length, header_ppm);
 	//process_image(ram_buff_2->start, ram_buff_2->length, header_ppm);
-	process_image(ram_buff_2[index].start, ram_buff_2[index].length, header_ppm); //only captures last
-    stop_capturing();
+	//process_image(pBuffers[index], ram_buff_2[index].length, header_ppm); //only captures last
+	//process_image(pBuffers[index], pLength[index], header_ppm); //only captures last
+	//printf("index is: %d and lenght: %d\n",test[index].pNum[1],test[index].pNum[0]);
+    //process_image(test->pData, test->pNum[0], header_ppm); //it works...
+	//process_image((test+index)->pData, (test+index)->pNum[0], header_ppm); //it works..
+	
+	
+	stop_capturing();
     uninit_device();
     close_device();
     fprintf(stderr, "\n");
@@ -296,6 +325,7 @@ void *Service_1(void *threadp)
     //double current_time;
     unsigned long long S1Cnt=0;
 	int read_index = 0;
+	int counter = 0;
     threadParams_t *threadParams = (threadParams_t *)threadp;
 
 	/* start frame time stamp */ 
@@ -317,9 +347,21 @@ void *Service_1(void *threadp)
     read_frame(read_index);	
 	//write_buff[read_index]->start = ram_buff_2->start;
 	//printf("read index is: %d\n",read_index);
-	//process_image(ram_buff_2->start, ram_buff_2->length, header_ppm);
-	
+	//process_image(ram_buff_2->start, ram_buff_2->length, header_ppm); //it works...
+	//pBuffers[read_index] = ram_buff_2->start;
+	//pLength[read_index] = ram_buff_2->length;
+	//process_image(pBuffers[read_index], pLength[read_index], header_ppm); //it works...
+	//test[read_index].pData = ram_buff_2->start;
+	//test[read_index].pNum[0] = ram_buff_2->length;	
+	//test[read_index].pNum[1] = read_index;
+	//process_image(test[read_index].pData, test[read_index].pNum[0], header_ppm); //it works...
+	//printf("index is: %d and lenght: %d\n",test[read_index].pNum[1],test[read_index].pNum[0]);
+	(test+counter)->pData = ram_buff_2->start;
+	(test+counter)->pNum[0] = ram_buff_2->length;	
+	(test+counter)->pNum[1] = read_index;
+	process_image((test+counter)->pData, (test+counter)->pNum[0], header_ppm); //it works..
 	read_index++;
+	counter++;
 /****************************************************************************************/
 	
 	/* End time stamp */

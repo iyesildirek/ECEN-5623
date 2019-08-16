@@ -48,6 +48,8 @@ extern int 				captured_frames;
 
 extern unsigned int framecnt;
 extern unsigned char bigbuffer[(1280*960)];
+extern void **pBuffers;          /* array of buffers */
+extern void **pLength;          /* array of buffers Length */
 
 typedef struct buffer 
 {
