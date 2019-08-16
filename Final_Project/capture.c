@@ -211,7 +211,7 @@ void process_image(const void *p, int size, char* host)
     fflush(stdout);
 }
 
-int read_frame( int index)
+int read_frame(int index)
 {
     struct v4l2_buffer buf;
 	int read_buff_flag = 0;
@@ -244,10 +244,12 @@ int read_frame( int index)
 
 			// Remove process to main loop and start on frame +15 or +7
 			// for 10 Hz or 1 Hz, respectively. 	
-			ram_buff_2[index-1].start = buffers[buf.index].start;
-			ram_buff_2[index-1].length = buf.bytesused;
+			ram_buff_2[frame_read].start = buffers[buf.index].start;
+			ram_buff_2[frame_read].length = buf.bytesused;
+			
 			//process_image(ram_buff_2[frame_read].start, ram_buff_2[frame_read].length, "host");
-			//printf("Frame read is: %d and index is %d\n", frame_read,index-1);
+			printf("Frame read is: %d and index is %d\n", frame_read,index);
+			//printf("%s\n", ram_buff_2[frame_read].start);
 			frame_read ++;
             if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                     errno_exit("VIDIOC_QBUF");
@@ -327,7 +329,7 @@ void init_mmap(void)
         }
 
 /**/
-        ram_buff_2 = calloc(2000, sizeof(*buffers));
+        ram_buff_2 = (struct buffer *)calloc(2000, sizeof(struct buffer));
         if (!ram_buff_2) 
         {
                 fprintf(stderr, "Out of memory\n");

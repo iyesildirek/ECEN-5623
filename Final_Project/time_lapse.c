@@ -2,6 +2,7 @@
 #include "capture.h"
 #include "time_lapse.h"
 
+struct buffer *write_buff[2000];
 char header_ppm[88] = "........................................................................................";
 /**************************************************
 * To set test duration of 110 seconds for 
@@ -31,7 +32,8 @@ int main(int argc, char **argv)
 	unsigned long long capture_period = 100*60*DURATION_MIN+160;
 #else
 // ensure 8 frames are captured for camera calibration and frame removal
-	unsigned long long capture_period = 100*60*DURATION_MIN+900;
+	//unsigned long long capture_period = 100*60*DURATION_MIN+900;
+	unsigned long long capture_period = 100*20*DURATION_MIN+900;
 #endif	
 	/************************ Host Information Input *****************************/
 	struct utsname unameData;
@@ -168,7 +170,7 @@ int main(int argc, char **argv)
 	
 	for (int index = 7; index <68; index++)
 	//process_image(ram_buff_2[index].start, ram_buff_2[index].length, header_ppm);
-	
+	process_image(write_buff[index], ram_buff_2->length, header_ppm);
     stop_capturing();
     uninit_device();
     close_device();
@@ -304,18 +306,19 @@ void *Service_1(void *threadp)
         sem_wait(&semS1);
         S1Cnt++;
 
-/* To Integrate*/
-
 		/* start frames time stamp */ 
 	clock_gettime(CLOCK_REALTIME, &frame_start_time);
 	syslog(LOG_CRIT,"Frame Capture start #%d seconds = %ld, nanoseconds = %ld\n", \
     S1Cnt, frame_start_time.tv_sec, frame_start_time.tv_nsec);	
-
+	
+/****************************************************************************************/
     read_frame(read_index);	
-	printf("read index is: %d\n",read_index);
-	process_image(ram_buff_2[read_index].start, ram_buff_2[read_index].length, header_ppm);
+	//write_buff[read_index]->start = ram_buff_2->start;
+	//printf("read index is: %d\n",read_index);
+	process_image(ram_buff_2->start, ram_buff_2->length, header_ppm);
+	
 	read_index++;
-	//process_image(ram_buff_2[0].start, ram_buff_2[0].length, "host");
+/****************************************************************************************/
 	
 	/* End time stamp */
 	clock_gettime(CLOCK_REALTIME, &frame_stop_time);
