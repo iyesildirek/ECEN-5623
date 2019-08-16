@@ -306,6 +306,7 @@ void *Service_1(void *threadp)
     S1Cnt, frame_start_time.tv_sec, frame_start_time.tv_nsec);	
 
     read_frame(header_ppm);
+	process_image(ram_buff.buffer[0].start, ram_buff.buffer[0].length, ram_buff.host);
 	/*process_image(buffers[buf.index].start, buf.bytesused);
        if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                     errno_exit("VIDIOC_QBUF");*/

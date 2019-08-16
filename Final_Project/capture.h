@@ -59,9 +59,9 @@ extern buffer_t buffer;
 /* Typedef for RAM Buffer*/
 typedef struct camera_buffer 
 {
-        buffer_t buffer; 
-		void   *start;
-        size_t  length;
+        buffer_t buffer[2000]; 
+		//void   *start;
+        //size_t  length;
 		char * host;
 }camera_buffer_t;
 

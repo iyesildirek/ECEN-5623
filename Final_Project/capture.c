@@ -242,11 +242,11 @@ int read_frame(char* host)
             
 			// Remove process to main loop and start on frame +15 or +7
 			// for 10 Hz or 1 Hz, respectively. 	
-			ram_buff.start = buffers[buf.index].start;
-			ram_buff.length = buf.bytesused;
+			ram_buff.buffer[0].start = buffers[buf.index].start;
+			ram_buff.buffer[0].length = buf.bytesused;
 			ram_buff.host = host;
 			//process_image(buffers[buf.index].start, buf.bytesused, host);
-			process_image(ram_buff.start, ram_buff.length, ram_buff.host);
+			//process_image(ram_buff.buffer[0].start, ram_buff.buffer[0].length, ram_buff.host);
             if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                     errno_exit("VIDIOC_QBUF");
 
