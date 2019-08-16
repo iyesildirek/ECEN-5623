@@ -298,7 +298,7 @@ void init_mmap(void)
         CLEAR(req);
 
 		//Set # of buffers to allocate
-        req.count = 5;
+        req.count = 1;
         req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         req.memory = V4L2_MEMORY_MMAP;
 
@@ -315,7 +315,7 @@ void init_mmap(void)
                 }
         }
 
-        if (req.count < 2) 
+        if (req.count < 1) 
         {
                 fprintf(stderr, "Insufficient buffer memory on %s\n", dev_name);
                 exit(EXIT_FAILURE);
