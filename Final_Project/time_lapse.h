@@ -78,7 +78,7 @@ int abortTest=FALSE;
 int abortS1=FALSE;
 sem_t semS1;
 struct timeval start_time_val;
-
+camera_buffer_t ram_buff_rx;
 /**************************************************
 * To set test duration of 110 seconds for 
 * - 100 frames @ 10Hz or 

@@ -39,6 +39,7 @@ typedef enum io_method
 extern io_method   io;
 extern int              fd ;
 extern struct buffer          *buffers;
+extern struct buffer          *ram_buff_2;
 extern unsigned int     n_buffers;
 extern int              out_buf;
 extern int              force_format;
@@ -63,6 +64,7 @@ typedef struct camera_buffer
 		//void   *start;
         //size_t  length;
 		char * host;
+		int index;
 }camera_buffer_t;
 
 extern camera_buffer_t ram_buff; //max number of frames
@@ -74,12 +76,10 @@ void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time, 
 void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time);
 void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b);
 void process_image(const void *p, int size, char* host);
-int read_frame(char* host);
+camera_buffer_t read_frame(char* host, int index);
 void start_capturing(void);
 void uninit_device(void);
-void init_read(unsigned int buffer_size);
 void init_mmap(void);
-void init_userp(unsigned int buffer_size);
 void init_device(void);
 void close_device(void);
 void open_device(void);

@@ -63,7 +63,7 @@ int main(int argc, char **argv)
    printf("System has %d processors configured and %d available.\n", get_nprocs_conf(), get_nprocs());
    CPU_ZERO(&allcpuset);
    for(i=0; i < NUM_CPU_CORES; i++)
-       CPU_SET(i, &allcpuset);
+   CPU_SET(i, &allcpuset);
    printf("Using CPUS=%d from total available.\n", CPU_COUNT(&allcpuset));
 
     // initialize the sequencer semaphores
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
     print_scheduler();
 
 /************************* Get camera ready prior to threads*************************/
-	struct timespec camera_start_time = {0,(long int)10000000000}; // delay for 0.9s
+	struct timespec camera_start_time = {0,(long int)10000000000}; // delay for 1.0s
     
     for (;;)
     {
@@ -305,11 +305,10 @@ void *Service_1(void *threadp)
 	syslog(LOG_CRIT,"Frame Capture start #%d seconds = %ld, nanoseconds = %ld\n", \
     S1Cnt, frame_start_time.tv_sec, frame_start_time.tv_nsec);	
 
-    read_frame(header_ppm);
-	process_image(ram_buff.buffer[0].start, ram_buff.buffer[0].length, ram_buff.host);
-	/*process_image(buffers[buf.index].start, buf.bytesused);
-       if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
-                    errno_exit("VIDIOC_QBUF");*/
+    ram_buff_rx = read_frame(header_ppm,S1Cnt);	
+	process_image(ram_buff_2[S1Cnt].start, ram_buff.buffer[0].length, ram_buff.host);
+	//process_image(ram_buff.buffer[S1Cnt].start, ram_buff.buffer[S1Cnt].length, ram_buff.host);
+	
 	/* End time stamp */
 	clock_gettime(CLOCK_REALTIME, &frame_stop_time);
 	syslog(LOG_CRIT,"Frame Capture stop #%d seconds = %ld, nanoseconds = %ld\n", \
