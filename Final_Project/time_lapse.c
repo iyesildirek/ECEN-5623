@@ -9,32 +9,11 @@ char header_ppm[88] = ".........................................................
 * - 100 frames @ 10Hz or 
 * - 10 frames @ 1 Hz
 **************************************************/
-/****************************************************/
-#define FIB_LIMIT (10)
-unsigned int seqIterations2 = FIB_LIMIT;
-unsigned int idx = 0, jdx = 1;
-unsigned int fib = 0, fib0 = 0, fib1 = 1;
-#define FIB_TEST(seqCnt, iterCnt)      \
-   for(idx=0; idx < iterCnt; idx++)    \
-   {                                   \
-      fib0=0; fib1=1; jdx=1;           \
-      fib = fib0 + fib1;               \
-      while(jdx < seqCnt)              \
-      {                                \
-         fib0 = fib1;                  \
-         fib1 = fib;                   \
-         fib = fib0 + fib1;            \
-         jdx++;                        \
-      }                                \
-   }                                   \
-
-/******************************************************/
 
 #define BUFFERS 2000       /* number of buffers       */
 
 		struct example {
-		//void * pData;
-		unsigned char *pData; 
+		void * pData;
 		int pNum[2];
 		};
 		struct example *test;
@@ -43,10 +22,10 @@ int main(int argc, char **argv)
 {
  
 	test = (struct example *)malloc(sizeof(struct example));
+	
 	struct timeval current_time_val;
     int i, rc, scope;
     cpu_set_t threadcpu;
-	cpu_set_t best_effort;
     pthread_t threads[NUM_THREADS];
     threadParams_t threadParams[NUM_THREADS];
     pthread_attr_t rt_sched_attr[NUM_THREADS];
@@ -64,7 +43,7 @@ int main(int argc, char **argv)
 	unsigned long long capture_period = 100*60*DURATION_MIN+160;
 #else
 // ensure 8 frames are captured for camera calibration and frame removal
-	unsigned long long capture_period = 100*20*DURATION_MIN;
+	unsigned long long capture_period = 100*60*DURATION_MIN+900;
 #endif	
 	/************************ Host Information Input *****************************/
 	struct utsname unameData;
@@ -108,12 +87,11 @@ int main(int argc, char **argv)
    CPU_ZERO(&allcpuset);
    for(i=0; i < NUM_CPU_CORES; i++)
    CPU_SET(i, &allcpuset);
-   printf("Using CPUS = %d from total available.\n", CPU_COUNT(&allcpuset));
+   printf("Using CPUS=%d from total available.\n", CPU_COUNT(&allcpuset));
 
     // initialize the sequencer semaphores
     if (sem_init (&semS1, 0, 0)) { printf ("Failed to initialize S1 semaphore\n"); exit (-1); }
-	if (sem_init (&semS2, 0, 0)) { printf ("Failed to initialize S2 write\n"); exit (-1); }
-	
+
     mainpid=getpid();
     rt_max_prio = sched_get_priority_max(SCHED_FIFO);
     rt_min_prio = sched_get_priority_min(SCHED_FIFO);
@@ -148,6 +126,7 @@ int main(int argc, char **argv)
 /*********************************************************************************/
 
     pthread_attr_getscope(&main_attr, &scope);
+
     if(scope == PTHREAD_SCOPE_SYSTEM)
       printf("PTHREAD SCOPE SYSTEM\n");
     else if (scope == PTHREAD_SCOPE_PROCESS)
@@ -164,23 +143,19 @@ int main(int argc, char **argv)
       CPU_ZERO(&threadcpu);
       CPU_SET(3, &threadcpu);
 
-      CPU_ZERO(&best_effort);
-      CPU_SET(1, &best_effort);
-
       rc=pthread_attr_init(&rt_sched_attr[i]);
       rc=pthread_attr_setinheritsched(&rt_sched_attr[i], PTHREAD_EXPLICIT_SCHED);
       rc=pthread_attr_setschedpolicy(&rt_sched_attr[i], SCHED_FIFO);
-	  if(i<NUM_THREADS-1)
-	  rc=pthread_attr_setaffinity_np(&rt_sched_attr[i], sizeof(cpu_set_t), &threadcpu);
-	  else
-		rc=pthread_attr_setaffinity_np(&rt_sched_attr[i], sizeof(cpu_set_t), &best_effort); 
-	  rt_param[i].sched_priority=rt_max_prio-i;
+      rc=pthread_attr_setaffinity_np(&rt_sched_attr[i], sizeof(cpu_set_t), &threadcpu);
+
+      rt_param[i].sched_priority=rt_max_prio-i;
       pthread_attr_setschedparam(&rt_sched_attr[i], &rt_param[i]);
+
       threadParams[i].threadIdx=i;
     }
-    printf("Real time Service threads will run on %d CPU core\n", CPU_COUNT(&threadcpu));
-	printf("Best Effort Service threads will run on %d CPU core\n", CPU_COUNT(&best_effort));
-	
+   
+    printf("Service threads will run on %d CPU cores\n", CPU_COUNT(&threadcpu));
+
     rt_param[1].sched_priority=rt_max_prio-1;
     pthread_attr_setschedparam(&rt_sched_attr[1], &rt_param[1]);
     rc=pthread_create(&threads[1],               // pointer to thread descriptor
@@ -192,21 +167,8 @@ int main(int argc, char **argv)
     if(rc < 0)
         perror("pthread_create for service W1");
     else
-        printf("pthread_create successful for capture service\n");
+        printf("pthread_create successful for service W1\n");
  
-
-/***************************************************************************/
-    // Best effort 
-    //
-    rt_param[2].sched_priority=rt_max_prio;
-    pthread_attr_setschedparam(&rt_sched_attr[2], &rt_param[2]);
-    rc=pthread_create(&threads[2], &rt_sched_attr[2], Sequencer, (void *)&(threadParams[2]));
-    if(rc < 0)
-        perror("pthread_create for sequencer service 0");
-    else
-        printf("pthread_create successful for write service 0\n");
-/***************************************************************************/
-
     // Create Sequencer thread, which like a cyclic executive, is highest prio
     printf("Start sequencer\n");
     threadParams[0].sequencePeriods=capture_period; // run for x seconds 
@@ -219,42 +181,16 @@ int main(int argc, char **argv)
     if(rc < 0)
         perror("pthread_create for sequencer service 0");
     else
-        printf("pthread_create successful for sequencer\n");
+        printf("pthread_create successful for sequencer service 0\n");
 	
-		int loop = 0;
-		   while(loop < 6)
-	{
-	   int temp = 100*loop/13;
-	   FIB_TEST(50,99999);
-	   printf("delay fib is: %d\n", loop);
-	   loop++;
-	}
+	process_image((test)->pData, (test)->pNum[0], header_ppm); //it works..
 	
-/*		
-	for (int index = 0; index <60; index++)
-	{
-	sem_wait(&semS2);
-	process_image((test+index)->pData, (test+index)->pNum[0], header_ppm); 
-	process_image((test+counter)->pData, (test+counter)->pNum[0], header_ppm); //it works..
-	sem_post(&semS2);
-}*/
-
-	for(i=0; i<NUM_THREADS; i++)
-     pthread_join(threads[i], NULL);
-  
-	sem_destroy(&semS1);sem_destroy(&semS2);
-
-	printf(" \n");
-	for (int index = 0; index <10; index++)
-	{
-	//process_image((test+index)->pData, (test+index)->pNum[0], header_ppm); //it works..
-	//process_image(test[index].pData, test[index].pNum[0], header_ppm); //it works..
-	printf("Writing frame #%d\n",index);
-	//process_image((test+index)->pData[index], test->pNum[0], header_ppm); //it works..
+   for(i=0;i<NUM_THREADS;i++)
+       pthread_join(threads[i], NULL);
 	
-	}
-
+	printf("All frames Captured\n");	
 	/*** After completion Close camera ****/
+	
 	//for (int index = 28; index >7; index--)
 	//process_image(ram_buff_2[index].start, ram_buff_2[index].length, header_ppm);
 	//process_image(write_buff[index], ram_buff_2->length, header_ppm);
@@ -264,6 +200,7 @@ int main(int argc, char **argv)
 	//printf("index is: %d and lenght: %d\n",test[index].pNum[1],test[index].pNum[0]);
     //process_image(test->pData, test->pNum[0], header_ppm); //it works...
 	//process_image((test+index)->pData, (test+index)->pNum[0], header_ppm); //it works..
+	
 	
 	stop_capturing();
     uninit_device();
@@ -279,6 +216,7 @@ void *Sequencer(void *threadp)
 	struct timeval prev_time_val;
 	struct timespec delay_time = {0,10000000}; // delay for 10.00 msec, 100 Hz
     struct timespec remaining_time;
+    //double current_time;
     double residual;
     int rc, delay_cnt=0;
     unsigned long long seqCnt=0;
@@ -361,16 +299,11 @@ void *Sequencer(void *threadp)
 #else
 		if((seqCnt % 100) == 0) sem_post(&semS1);//@1HZ
 #endif		
-	/*	if((seqCnt % 200) == 0) 
-		{
-			sem_post(&semS2);//@0.5HZ
-		}*/
+ 
     } while(!abortTest && (seqCnt < threadParams->sequencePeriods));
 
     sem_post(&semS1);
-	sem_post(&semS2);
     abortS1=TRUE; 
-	abortS2=TRUE; 
 	syslog(LOG_CRIT, "Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
     //printf("Sequencer thread ended @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
 	//ave_execution = total_ex/1000;
@@ -412,17 +345,21 @@ void *Service_1(void *threadp)
 	
 /****************************************************************************************/
     read_frame(read_index);	
-	(test+counter)->pData = (unsigned char *)ram_buff_2->start;
+	//write_buff[read_index]->start = ram_buff_2->start;
+	//printf("read index is: %d\n",read_index);
+	//process_image(ram_buff_2->start, ram_buff_2->length, header_ppm); //it works...
+	//pBuffers[read_index] = ram_buff_2->start;
+	//pLength[read_index] = ram_buff_2->length;
+	//process_image(pBuffers[read_index], pLength[read_index], header_ppm); //it works...
+	//test[read_index].pData = ram_buff_2->start;
+	//test[read_index].pNum[0] = ram_buff_2->length;	
+	//test[read_index].pNum[1] = read_index;
+	//process_image(test[read_index].pData, test[read_index].pNum[0], header_ppm); //it works...
+	//printf("index is: %d and lenght: %d\n",test[read_index].pNum[1],test[read_index].pNum[0]);
+	(test+counter)->pData = ram_buff_2->start;
 	(test+counter)->pNum[0] = ram_buff_2->length;	
 	(test+counter)->pNum[1] = read_index;
-	//process_image((test+counter)->pData, (test+counter)->pNum[0], header_ppm); //it works..
-	//test[index].pData = (unsigned char *)ram_buff_2->start;
-	//test[index].pNum[0] = ram_buff_2->length;	
-	//test[index].pNum[1] = read_index;
-	(test+read_index)->pData = (unsigned char *)ram_buff_2->start;
-	test->pNum[0] = ram_buff_2->length;	
-	test->pNum[1] = read_index;
-	//process_image(test[read_index].pData, test->pNum[0], header_ppm); //it works..
+	process_image((test+counter)->pData, (test+counter)->pNum[0], header_ppm); //it works..
 	read_index++;
 	counter++;
 /****************************************************************************************/
@@ -455,43 +392,13 @@ void *Service_1(void *threadp)
 
 /**********************************************************/
 
+        //gettimeofday(&current_time_val, (struct timezone *)0);
         clock_gettime(CLOCK_REALTIME, &current_time_val);
 		syslog(LOG_CRIT, "%dHZ Frame Capture thread release %llu @ sec=%d, msec=%d\n", freq, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)(current_time_val.tv_usec)/USEC_PER_MSEC);
     }
-	sem_post(&semS2);
+
     pthread_exit((void *)0);
 }
-
-void *Service_2(void *threadp)
-{
-    struct timeval current_time_val_BE;
-	struct timeval initial_time_val_BE;
-    unsigned long long S2Cnt=0;
-	int read_index_2 = 0;
-	int counter_2 = 0;
-    threadParams_t *threadParams = (threadParams_t *)threadp;
-
-	/* start frame time stamp */ 
-	clock_gettime(CLOCK_REALTIME, &initial_time_val_BE);
-//   syslog(LOG_CRIT, "10HZ W1 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-    //printf("10HZ W1 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-
-    while(!abortS2)
-    {
-        sem_wait(&semS2);
-        S2Cnt++;
-	printf("thread 2 and count %d\n",read_index_2);
-/****************************************************************************************/
-	process_image((test+read_index_2)->pData, (test+read_index_2)->pNum[0], header_ppm); //it works..
-	read_index_2++;
-	counter_2++;
-/****************************************************************************************/
-	sem_post(&semS2);
-	}
-	
-    pthread_exit((void *)0);
-}
-
 
 double getTimeMsec(void)
 {

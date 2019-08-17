@@ -40,7 +40,7 @@ int frame_read = 0;
 void **pBuffers;
 void **pLength;
 unsigned int framecnt=0;
-unsigned char bigbuffer[(640*480*3)];
+unsigned char bigbuffer[(1280*960)];
 buffer_t buffer;
 camera_buffer_t ram_buff;	
 void errno_exit(const char *s)
@@ -245,8 +245,8 @@ int read_frame(int index)
 
 			// Remove process to main loop and start on frame +15 or +7
 			// for 10 Hz or 1 Hz, respectively. 	
-			ram_buff_2[index-1].start = buffers[buf.index].start;
-			ram_buff_2[index-1].length = buf.bytesused;
+			ram_buff_2[frame_read].start = buffers[buf.index].start;
+			ram_buff_2[frame_read].length = buf.bytesused;
 			//printf("Buffer size is: %d\n",sizeof(buffers[buf.index].start));
 			//process_image(ram_buff_2[frame_read].start, ram_buff_2[frame_read].length, "host");
 			
@@ -255,6 +255,7 @@ int read_frame(int index)
 			//process_image(pBuffers[frame_read], pLength[frame_read], "host");
 			//printf("Frame read is: %d and index is %d\n", frame_read,index);
 			//printf("%s\n", ram_buff_2[frame_read].start);
+			frame_read ++;
             if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
                     errno_exit("VIDIOC_QBUF");
     return 1;
