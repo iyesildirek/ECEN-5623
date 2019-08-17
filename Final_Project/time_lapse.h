@@ -64,11 +64,11 @@
 
 #define USEC_PER_MSEC (1000)
 #define NANOSEC_PER_SEC (1000000000)
-#define NUM_CPU_CORES (1)
+#define NUM_CPU_CORES (2)
 #define TRUE (1)
 #define FALSE (0)
 #define ERROR (-1)
-#define NUM_THREADS (1+1)
+#define NUM_THREADS (2+1)
 
 /* Enable for 10 Hz Frame Capture. Otherwise is 1 Hz*/
 //#define TEN_HZ (10) 
@@ -76,7 +76,9 @@
 
 int abortTest=FALSE;
 int abortS1=FALSE;
+int abortS2=FALSE;
 sem_t semS1;
+sem_t semS2;
 struct timeval start_time_val;
 camera_buffer_t ram_buff_rx;
 /**************************************************
@@ -132,6 +134,7 @@ extern char header_ppm[88];
 /* Function Prototypes */
 void *Sequencer(void *threadp);
 void *Service_1(void *threadp);
+void *Service_2(void *threadp);
 double getTimeMsec(void);
 void print_scheduler(void);
 /* End of Function Prototypes */

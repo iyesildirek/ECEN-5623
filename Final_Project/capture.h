@@ -47,7 +47,7 @@ extern int              frame_count;
 extern int 				captured_frames;
 
 extern unsigned int framecnt;
-extern unsigned char bigbuffer[(1280*960)];
+extern unsigned char bigbuffer[(640*480*3)];
 extern void **pBuffers;          /* array of buffers */
 extern void **pLength;          /* array of buffers Length */
 
