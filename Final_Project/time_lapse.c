@@ -17,12 +17,19 @@ char header_ppm[88] = ".........................................................
 		int pNum[2];
 		};
 		struct example *test;
-		
+
+unsigned char * temp_test;		
+
 int main(int argc, char **argv)
 {
- 
-	test = (struct example *)malloc(sizeof(struct example));
+	//test = (struct example *)malloc(sizeof(struct example));
+	//
+	//test = (struct example *)calloc(40, sizeof(struct example *)); 
+	//test->pData = (void *)calloc(40, sizeof(void)); 
+	temp_test = (unsigned char *)calloc(40, sizeof(unsigned char)); 
 	
+	if (test == NULL || test->pData == NULL)                          
+    printf("Allocation failed!\n\n");
 	struct timeval current_time_val;
     int i, rc, scope;
     cpu_set_t threadcpu;
@@ -43,7 +50,7 @@ int main(int argc, char **argv)
 	unsigned long long capture_period = 100*60*DURATION_MIN+160;
 #else
 // ensure 8 frames are captured for camera calibration and frame removal
-	unsigned long long capture_period = 100*60*DURATION_MIN+900;
+	unsigned long long capture_period = 100*20*DURATION_MIN+900;
 #endif	
 	/************************ Host Information Input *****************************/
 	struct utsname unameData;
@@ -64,18 +71,6 @@ int main(int argc, char **argv)
 	printf("%s", userIn);
 	strcpy(header_ppm,userIn);
 	printf("%s\n",header_ppm);
-	/************************************************************************/
-	
-	/******************************* Write Buffer *************************************/
-	pBuffers = (void**)calloc (BUFFERS, sizeof(struct buffer)); //make array of arrays
-	pLength = (void**)calloc (BUFFERS, sizeof(int)); //make array of arrays
-	int j;
-	for (j = 0; j < BUFFERS; j++) 
-	{
-	pBuffers[j] = (void*)calloc(4, sizeof(struct buffer)); // make actual arrays
-	pLength[j] = (void*)calloc(4, sizeof(int)); // make actual arrays
-	}
-	/*****************************************************************************/
 	
     printf("Starting Sequencer\n");
 	/*Best effort time stamp*/
@@ -183,15 +178,13 @@ int main(int argc, char **argv)
     else
         printf("pthread_create successful for sequencer service 0\n");
 	
-	process_image((test)->pData, (test)->pNum[0], header_ppm); //it works..
-	
    for(i=0;i<NUM_THREADS;i++)
        pthread_join(threads[i], NULL);
 	
 	printf("All frames Captured\n");	
 	/*** After completion Close camera ****/
 	
-	//for (int index = 28; index >7; index--)
+	for (int index = 0; index <=10; index++)
 	//process_image(ram_buff_2[index].start, ram_buff_2[index].length, header_ppm);
 	//process_image(write_buff[index], ram_buff_2->length, header_ppm);
 	//process_image(ram_buff_2->start, ram_buff_2->length, header_ppm);
@@ -199,9 +192,10 @@ int main(int argc, char **argv)
 	//process_image(pBuffers[index], pLength[index], header_ppm); //only captures last
 	//printf("index is: %d and lenght: %d\n",test[index].pNum[1],test[index].pNum[0]);
     //process_image(test->pData, test->pNum[0], header_ppm); //it works...
-	//process_image((test+index)->pData, (test+index)->pNum[0], header_ppm); //it works..
 	
-	
+	//process_image(test[index].pData[index], test[index].pNum[0], header_ppm); //it works..
+	//process_image(&temp_test[index], test[index].pNum[0], header_ppm); //it works..
+		
 	stop_capturing();
     uninit_device();
     close_device();
@@ -327,7 +321,7 @@ void *Service_1(void *threadp)
 	int read_index = 0;
 	int counter = 0;
     threadParams_t *threadParams = (threadParams_t *)threadp;
-
+	void * temp_read;
 	/* start frame time stamp */ 
 //	clock_gettime(CLOCK_REALTIME, &current_time_val);
 //   syslog(LOG_CRIT, "10HZ W1 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
@@ -356,10 +350,14 @@ void *Service_1(void *threadp)
 	//test[read_index].pNum[1] = read_index;
 	//process_image(test[read_index].pData, test[read_index].pNum[0], header_ppm); //it works...
 	//printf("index is: %d and lenght: %d\n",test[read_index].pNum[1],test[read_index].pNum[0]);
-	(test+counter)->pData = ram_buff_2->start;
-	(test+counter)->pNum[0] = ram_buff_2->length;	
-	(test+counter)->pNum[1] = read_index;
-	process_image((test+counter)->pData, (test+counter)->pNum[0], header_ppm); //it works..
+	//(test+counter)->pData[counter] = ram_buff_2->start;
+	//(test+counter)->pNum[0] = ram_buff_2->length;	
+	//(test+counter)->pNum[1] = read_index;
+	//memcpy(temp_test, (test+counter)->pData,(test+counter)->pNum[0]);
+	temp_test[read_index] = ram_buff_2->start;
+	//while not triggered then write;
+	//process_image((test+counter)->pData, (test+counter)->pNum[0], header_ppm); //it works..
+	process_image(ram_buff_2->start, ram_buff_2->length, header_ppm); //it works..
 	read_index++;
 	counter++;
 /****************************************************************************************/
@@ -391,8 +389,6 @@ void *Service_1(void *threadp)
 	syslog(LOG_CRIT,"Average Jitter for 1Hz is = %0.1f mS\n",deadline_in_ms_one_hz - frame_ex_time_ms);
 
 /**********************************************************/
-
-        //gettimeofday(&current_time_val, (struct timezone *)0);
         clock_gettime(CLOCK_REALTIME, &current_time_val);
 		syslog(LOG_CRIT, "%dHZ Frame Capture thread release %llu @ sec=%d, msec=%d\n", freq, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)(current_time_val.tv_usec)/USEC_PER_MSEC);
     }

@@ -74,7 +74,7 @@ int xioctl(int fh, int request, void *arg);
 void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time, char* host);
 void dump_pgm(const void *p, int size, unsigned int tag, struct timespec *time);
 void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned char *b);
-void process_image(const void *p, int size, char* host);
+void process_image(unsigned char *p, int size, char* host);
 int read_frame(int index);
 void start_capturing(void);
 void uninit_device(void);

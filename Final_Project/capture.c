@@ -16,16 +16,16 @@
 #include <capture.h>
 
 // Format is used by a number of functions, so made as a file global
- struct v4l2_format fmt;
+struct v4l2_format fmt;
 
- char ppm_header[]="P6\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
- char ppm_dumpname[]="test00000000.ppm";
+char ppm_header[]="P6\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
+char ppm_dumpname[]="test00000000.ppm";
                                               //29
- char pgm_header[]="P5\n#9999999999 sec 9999999999 msec \n"HRES_STR" \
+char pgm_header[]="P5\n#9999999999 sec 9999999999 msec \n"HRES_STR" \
  "VRES_STR"\n255\n\n#Linux raspberrypi 4.19.57-v7+ #1244 SMP Thu Jul 4 18:45:25 BST 2019 armv7l GNU/Linux \n";
- char pgm_dumpname[]="test00000000.ppm";
+char pgm_dumpname[]="test00000000.ppm";
 
- char *dev_name = "/dev/video0";
+char *dev_name = "/dev/video0";
 
 io_method   io = IO_METHOD_MMAP;
 int              fd = -1;
@@ -152,13 +152,13 @@ void yuv2rgb(int y, int u, int v, unsigned char *r, unsigned char *g, unsigned c
    *b = b1 ;
 }
 
-void process_image(const void *p, int size, char* host)
+void process_image(unsigned char *p, int size, char* host)
 {
     int i, newi, newsize=0;
     struct timespec frame_time;
     int y_temp, y2_temp, u_temp, v_temp;
 	
-	unsigned char *pptr = (unsigned char *)p; 
+	//unsigned char *pptr = p; 
 	
     // record when process was called
     clock_gettime(CLOCK_REALTIME, &frame_time);    
@@ -180,8 +180,9 @@ void process_image(const void *p, int size, char* host)
         //
         for(i=0, newi=0; i<size; i=i+4, newi=newi+6)
         {
-            y_temp=(int)pptr[i]; u_temp=(int)pptr[i+1]; y2_temp=(int)pptr[i+2]; v_temp=(int)pptr[i+3];
-            yuv2rgb(y_temp, u_temp, v_temp, &bigbuffer[newi], &bigbuffer[newi+1], &bigbuffer[newi+2]);
+            //y_temp=(int)pptr[i]; u_temp=(int)pptr[i+1]; y2_temp=(int)pptr[i+2]; v_temp=(int)pptr[i+3];
+           y_temp=(int)p[i]; u_temp=(int)p[i+1]; y2_temp=(int)p[i+2]; v_temp=(int)p[i+3]; 
+			yuv2rgb(y_temp, u_temp, v_temp, &bigbuffer[newi], &bigbuffer[newi+1], &bigbuffer[newi+2]);
             yuv2rgb(y2_temp, u_temp, v_temp, &bigbuffer[newi+3], &bigbuffer[newi+4], &bigbuffer[newi+5]);
         }
         dump_ppm(bigbuffer, ((size*6)/4), framecnt, &frame_time, host);
@@ -194,8 +195,10 @@ void process_image(const void *p, int size, char* host)
         for(i=0, newi=0; i<size; i=i+4, newi=newi+2)
         {
             // Y1=first byte and Y2=third byte
-            bigbuffer[newi]=pptr[i];
-            bigbuffer[newi+1]=pptr[i+2];
+           // bigbuffer[newi]=pptr[i];
+           // bigbuffer[newi+1]=pptr[i+2];
+		   bigbuffer[newi]=p[i];
+           bigbuffer[newi+1]=p[i+2];
         }
 
         dump_pgm(bigbuffer, (size/2), framecnt, &frame_time);
@@ -249,7 +252,6 @@ int read_frame(int index)
 			ram_buff_2[frame_read].length = buf.bytesused;
 			//printf("Buffer size is: %d\n",sizeof(buffers[buf.index].start));
 			//process_image(ram_buff_2[frame_read].start, ram_buff_2[frame_read].length, "host");
-			
 			//pBuffers[frame_read] = ram_buff_2[frame_read].start;
 			//pLength[frame_read] = ram_buff_2[frame_read].length;
 			//process_image(pBuffers[frame_read], pLength[frame_read], "host");
@@ -334,7 +336,7 @@ void init_mmap(void)
         }
 
 /**/
-        ram_buff_2 = (struct buffer *)calloc(2000, sizeof(struct buffer));
+        ram_buff_2 = (struct buffer *)calloc(40, sizeof(struct buffer));
         if (!ram_buff_2) 
         {
                 fprintf(stderr, "Out of memory\n");
