@@ -6,19 +6,19 @@ CDEFS=
 CFLAGS= -O0 -g $(INCLUDE_DIRS) $(CDEFS)
 LIBS= 
 
-HFILES= 
-CFILES= feasibility_tests.c
+HFILES= ring.h
+CFILES= ring.c
 
 SRCS= ${HFILES} ${CFILES}
 OBJS= ${CFILES:.c=.o}
 
-all:	feasibility_tests
+all:	ring
 
 clean:
 	-rm -f *.o *.d
-	-rm -f feasibility_tests
+	-rm -f ring
 
-feasibility_tests: feasibility_tests.o
+ring: ring.o
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lm
 
 depend:

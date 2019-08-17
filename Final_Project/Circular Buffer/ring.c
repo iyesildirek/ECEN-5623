@@ -28,46 +28,12 @@
 * Reference "Implementing Circular Buffer in C" for implementation strategy. 
 * https://embedjournal.com/implementing-circular-buffer-embedded-c/
 */
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
-#ifndef RING_H
-#define RING_H
 
-typedef struct
-{
-	void *Buffer;
-	int Length; /*Max size*/
-	int Ini; /*head*/
-	int Outi; /*tail*/
-	int count; /*# of char buffer*/
-	void circularQueue[20];
-} ring_t;
+/****Header Files****/
+#include "ring.h"
 
-
-/****Function Prototypes****/
-
-ring_t* init( int length );
-
-/*Return 0 for success and -1 for failure*/
-int insert( ring_t *ring, char data );
-int rm( ring_t *ring, char *data );
-/*Remove() renamed to rm() to avoid name issue*/
-
-/* Entries should return the number of elements present in the circular buffer*/
-/* The number of elements that are entered but not removed from the circular list*/
-int entries( ring_t *ring );
-
-#endif
-
-
-
-/****Global Variables****/
-#define TRUE 1
-#define FALSE 0
-const static int bufferSize = 20; 
-char data[4] = { "    " };
+int bufferSize = 4;  //ok for camera void data
+unsigned char data[4] = { "    " };
 int queueFull = 0;
 
 /****Main Code****/
@@ -77,26 +43,30 @@ int main(void)
 	int insertStatus = 0;
 	int rmStatus =0;
 	int entryStatus =0;
-	char userInput = ' ';
+	unsigned char userInput = ' ';
 //	int insertFlag = 0;
-	char charInput;
+	unsigned char charInput[4];
 
 	/*Initialize buffer and set length*/
 	buffer_struct = init(bufferSize);
+	printf("The size of buffer is: %d and length is: %d\n",sizeof(buffer_struct->Buffer), sizeof(buffer_struct->Length));
 
 	/*Add data to empty buffer*/
-	if ((buffer_struct != NULL) || (buffer_struct->Buffer != NULL) || (buffer_struct->circularQueue != NULL))
+	if ((buffer_struct == NULL) || (buffer_struct->Buffer == NULL) || (buffer_struct->circularQueue == NULL))
 	{
+		printf("NULL pointer provided\n");
+		return 0;
+	}
 		printf("This program creates a circular buffer of size %d\n", bufferSize);
 		while (1)
 		{
 			printf("Please enter 0 to insert, 1 to remove, 2 to check the number of entries in the circular buffer or 3 to exit\n");
-			scanf(" %c", &userInput);
+			scanf(" %u", &userInput);
 			fflush(stdin);                 /* Flushing keyboard buffer from previous input*/
 			if (userInput == '0')
 			{
 				printf("Please enter a char for the circular buffer: ");
-				scanf(" %c", &charInput);
+				scanf(" %u", &charInput);
 				insertStatus = insert(buffer_struct, charInput);
 				if (insertStatus == 1)
 				{
@@ -143,12 +113,6 @@ int main(void)
 				printf("Enter a valid command (0, 1, 2, or 3)\n");
 			}
 		}
-	}
-	else
-	{
-		printf("NULL pointer provided\n");
-	}
-	return 0;
 }
 
 /****Function Definitions****/
@@ -165,7 +129,7 @@ ring_t* init(int length)
 	return temp;
 }
 
-int insert(ring_t *ring, char data)
+int insert(ring_t *ring, unsigned char data)
 {
 	if ((ring != NULL) || (ring->Buffer != NULL) || (ring->circularQueue != NULL))
 	{
@@ -214,7 +178,7 @@ int insert(ring_t *ring, char data)
 	}
 }
 
-int rm(ring_t *ring, char *data)
+int rm(ring_t *ring, unsigned char *data)
 {
 	if ((ring != NULL) || (ring->Buffer != NULL) || (ring->circularQueue != NULL))
 	{
@@ -268,3 +232,4 @@ int entries(ring_t *ring)
 		return -1;
 	}
 }
+
