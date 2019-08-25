@@ -28,6 +28,7 @@
 // Format is used by a number of functions, so made as a file global
 extern struct v4l2_format fmt;
 extern char *dev_name;
+extern FILE *jitter_file, *ave_execution;
 
 typedef enum io_method 
 {

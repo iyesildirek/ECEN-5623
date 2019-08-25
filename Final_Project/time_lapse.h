@@ -72,7 +72,7 @@
 
 /* Enable for 10 Hz Frame Capture. Otherwise is 1 Hz*/
 //#define TEN_HZ (10) 
-#define DURATION_MIN (1) //set # of minutes to takes frames
+#define DURATION_MIN (3) //set # of minutes to takes frames
 
 int abortTest=FALSE;
 int abortS1=FALSE;
@@ -109,9 +109,10 @@ typedef struct
 	double sec_time_in_ms = 0.0;
 	double nano_time_in_ms = 0.0;
 	double ms_time = 0.0;
-	double deadline_in_ms = 100; //10Hz
+	double deadline_in_ms = 90; //10Hz
 	double deadline_in_ms_one_hz = 1000; //1Hz
 	double frame_ex_time_ms = 0;
+	double frame_jitter = 0;
 	
 const char short_options[] = "d:hmruofc:";
 const struct option

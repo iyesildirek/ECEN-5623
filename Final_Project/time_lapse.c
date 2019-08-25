@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 	/******* set duration **********/
 #ifdef TEN_HZ
 // ensure 15 frames are captured for camera calibration and frame removal
-	unsigned long long capture_period = 100*60*DURATION_MIN+160;
+	unsigned long long capture_period = 100*60*DURATION_MIN+160*3;
 #else
 // ensure 8 frames are captured for camera calibration and frame removal
 	unsigned long long capture_period = 100*60*DURATION_MIN+900;
@@ -276,13 +276,13 @@ void *Sequencer(void *threadp)
 		{
 		 delta_ex = current_ex_start - (prev_time_val.tv_usec/USEC_PER_MSEC);
 		 ave_execution = (delta_ex+ave_execution)/2;
-		 ave_jitter = (ave_jitter + 10 - delta_ex)/2; //100Hz
+		 ave_jitter = (ave_jitter + 9 - delta_ex)/2; //100Hz
 		}
 		else
 		{
 			delta_ex = (prev_time_val.tv_usec/USEC_PER_MSEC)-current_ex_start;
 			ave_execution = (delta_ex+ave_execution)/2;
-		 ave_jitter = (ave_jitter + 10 - delta_ex)/2; //100Hz
+		 ave_jitter = (ave_jitter + 9 - delta_ex)/2; //100Hz
 		}
 		if(wcet<delta_ex)
 		{
@@ -326,13 +326,14 @@ void *Service_1(void *threadp)
     unsigned long long S1Cnt=0;
 	int read_index = 0;
 	int counter = 0;
+	int fp1 = 0;
+	int written = 0;
     threadParams_t *threadParams = (threadParams_t *)threadp;
-
-	/* start frame time stamp */ 
-//	clock_gettime(CLOCK_REALTIME, &current_time_val);
-//   syslog(LOG_CRIT, "10HZ W1 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-    //printf("10HZ W1 thread @ sec=%d, msec=%d\n", (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)current_time_val.tv_usec/USEC_PER_MSEC);
-
+	char average_ex_buffer[20] = "                    ";
+	
+	
+	//fp1 = open("jitter_execution.csv", O_WRONLY | O_NONBLOCK | O_CREAT, 00666);
+	
     while(!abortS1)
     {
         sem_wait(&semS1);
@@ -345,17 +346,6 @@ void *Service_1(void *threadp)
 	
 /****************************************************************************************/
     read_frame(read_index);	
-	//write_buff[read_index]->start = ram_buff_2->start;
-	//printf("read index is: %d\n",read_index);
-	//process_image(ram_buff_2->start, ram_buff_2->length, header_ppm); //it works...
-	//pBuffers[read_index] = ram_buff_2->start;
-	//pLength[read_index] = ram_buff_2->length;
-	//process_image(pBuffers[read_index], pLength[read_index], header_ppm); //it works...
-	//test[read_index].pData = ram_buff_2->start;
-	//test[read_index].pNum[0] = ram_buff_2->length;	
-	//test[read_index].pNum[1] = read_index;
-	//process_image(test[read_index].pData, test[read_index].pNum[0], header_ppm); //it works...
-	//printf("index is: %d and lenght: %d\n",test[read_index].pNum[1],test[read_index].pNum[0]);
 	(test+counter)->pData = ram_buff_2->start;
 	(test+counter)->pNum[0] = ram_buff_2->length;	
 	(test+counter)->pNum[1] = read_index;
@@ -383,20 +373,25 @@ void *Service_1(void *threadp)
 		ms_time = sec_time*1000+nano_time_in_ms;
 		frame_ex_time_ms = ms_time/frame_count;
 	}
-
+	
+	frame_jitter = deadline_in_ms - frame_ex_time_ms;
+	
 	syslog(LOG_CRIT,"Capture time per %d frames is = %0.lf S and %0.1f mS\n", captured_frames, sec_time, nano_time_in_ms);
 	captured_frames++;
 	syslog(LOG_CRIT,"Frame average execution time is = %0.1f mS.\n", frame_ex_time_ms);
-	syslog(LOG_CRIT,"Average Jitter for 10Hz is = %0.1f mS\n",deadline_in_ms - frame_ex_time_ms);
-	syslog(LOG_CRIT,"Average Jitter for 1Hz is = %0.1f mS\n",deadline_in_ms_one_hz - frame_ex_time_ms);
-
+	syslog(LOG_CRIT,"Average Jitter for frame capture is = %0.1f mS\n",frame_jitter);
+	
+	//printf("Average Jitter for frame capture is = %0.1f mS\n",frame_jitter);
+	//snprintf(average_ex_buffer,20, "%f\n", frame_jitter);
+	//write(fp1, average_ex_buffer, sizeof(average_ex_buffer));
+	//average_ex_buffer[20] = "                    ";
 /**********************************************************/
 
         //gettimeofday(&current_time_val, (struct timezone *)0);
         clock_gettime(CLOCK_REALTIME, &current_time_val);
 		syslog(LOG_CRIT, "%dHZ Frame Capture thread release %llu @ sec=%d, msec=%d\n", freq, (int)(current_time_val.tv_sec-start_time_val.tv_sec), (int)(current_time_val.tv_usec)/USEC_PER_MSEC);
     }
-
+	close(fp1);
     pthread_exit((void *)0);
 }
 

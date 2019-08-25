@@ -17,7 +17,7 @@
 
 // Format is used by a number of functions, so made as a file global
  struct v4l2_format fmt;
-
+ FILE *jitter_file, *ave_execution;
  char ppm_header[]="P6\n#9999999999 sec 9999999999 msec \n"HRES_STR" "VRES_STR"\n255\n";
  char ppm_dumpname[]="test00000000.ppm";
                                               //29

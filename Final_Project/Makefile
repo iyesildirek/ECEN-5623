@@ -19,7 +19,7 @@ OBJS= ${CFILES:.c=.o}
 all:	${PRODUCT}
 
 clean:
-	-rm -f *.o *.pgm *~ *.d *.ppm
+	-rm -f *.o *.pgm *~ *.d *.ppm 
 	-rm -f ${PRODUCT} ${GARBAGE} outputFile.log uname.txt
 
 time_lapse:	time_lapse.o capture.o
