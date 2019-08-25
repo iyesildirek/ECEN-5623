@@ -35,10 +35,10 @@
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 #define COLOR_CONVERT
-#define HRES 320
-#define VRES 240
-#define HRES_STR "320"
-#define VRES_STR "240"
+#define HRES 640
+#define VRES 480
+#define HRES_STR "640"
+#define VRES_STR "480"
 
 // Format is used by a number of functions, so made as a file global
 static struct v4l2_format fmt;
@@ -65,7 +65,7 @@ struct buffer          *buffers;
 static unsigned int     n_buffers;
 static int              out_buf;
 static int              force_format=1;
-static int              frame_count = 30;
+static int              frame_count = 2000;
 
 static void errno_exit(const char *s)
 {
@@ -92,7 +92,7 @@ char ppm_dumpname[]="test00000000.ppm";
 static void dump_ppm(const void *p, int size, unsigned int tag, struct timespec *time)
 {
     int written, i, total, dumpfd;
-   
+	printf("The size of frame is: %d\n",sizeof(size));
     snprintf(&ppm_dumpname[4], 9, "%08d", tag);
     strncat(&ppm_dumpname[12], ".ppm", 5);
     dumpfd = open(ppm_dumpname, O_WRONLY | O_NONBLOCK | O_CREAT, 00666);
@@ -575,7 +575,7 @@ static void init_mmap(void)
 
         CLEAR(req);
 
-        req.count = 6;
+        req.count = 200;
         req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         req.memory = V4L2_MEMORY_MMAP;
 
